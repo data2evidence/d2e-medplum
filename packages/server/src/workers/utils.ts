@@ -192,16 +192,16 @@ export async function updateAsyncJobOutput(
   );
 }
 
-export type WorkerInitializer = (config: MedplumServerConfig) => { queue: Queue; worker: Worker; name: string };
+export type WorkerInitializer = (config: MedplumServerConfig) => { queue: Queue; name: string };
 
 export interface QueueRegistry {
-  add(name: string, queue: Queue, worker: Worker): void;
+  add(name: string, queue: Queue): void;
   get<T>(name: string): Queue<T> | undefined;
   isClosing(name: string): boolean | undefined;
   closeAll(): Promise<void>[];
 }
 
-type QueueEntry = { queue: Queue | undefined; worker: Worker | undefined; isClosing: boolean };
+type QueueEntry = { queue: Queue | undefined; isClosing: boolean };
 
 // exported for testing only, use `queueRegistry` for non-test code
 export class DefaultQueueRegistry implements QueueRegistry {
@@ -211,18 +211,12 @@ export class DefaultQueueRegistry implements QueueRegistry {
     this.queueMap = Object.create(null);
   }
 
-  add(name: string, queue: Queue, worker: Worker): void {
+  add(name: string, queue: Queue): void {
     if (this.queueMap[name]) {
       throw new Error(`Queue ${name} already registered`);
     }
 
-    this.queueMap[name] = { queue, worker, isClosing: false };
-
-    worker.on('closing', () => {
-      if (this.queueMap[name]) {
-        this.queueMap[name].isClosing = true;
-      }
-    });
+    this.queueMap[name] = { queue, isClosing: false };
   }
 
   get<T>(name: string): Queue<T> | undefined {
@@ -233,12 +227,6 @@ export class DefaultQueueRegistry implements QueueRegistry {
     const entry = this.queueMap[name];
     if (!entry) {
       return;
-    }
-
-    // Close worker first, so any jobs that need to finish can enqueue the next job before exiting
-    if (entry.worker) {
-      await entry.worker.close();
-      entry.worker = undefined;
     }
 
     if (entry.queue) {

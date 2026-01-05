@@ -9,9 +9,9 @@ import {
   WithId,
 } from '@medplum/core';
 import { AsyncJob, Bundle, Parameters, ParametersParameter, Resource, ResourceType } from '@medplum/fhirtypes';
-import { Job, Queue, QueueBaseOptions, Worker } from 'bullmq';
+import { Job, Queue, QueueBaseOptions } from 'bullmq';
 import { getConfig } from '../config/loader';
-import { getRequestContext, tryRunInRequestContext } from '../context';
+import { getRequestContext } from '../context';
 import { DatabaseMode, getDatabasePool, getDefaultStatementTimeout } from '../database';
 import { AsyncJobExecutor } from '../fhir/operations/utils/asyncjobexecutor';
 import { getSystemRepo, Repository } from '../fhir/repo';
@@ -20,7 +20,6 @@ import { getPostDeployVersion } from '../migration-sql';
 import { PostDeployJobData, PostDeployMigration } from '../migrations/data/types';
 import { MigrationVersion } from '../migrations/migration-versions';
 import {
-  addVerboseQueueLogging,
   isJobActive,
   isJobCompatible,
   moveToDelayedAndThrow,
@@ -80,20 +79,7 @@ export const initReindexWorker: WorkerInitializer = (config) => {
     },
   });
 
-  const worker = new Worker<ReindexJobData>(
-    ReindexQueueName,
-    async (job) => tryRunInRequestContext(job.data.requestId, job.data.traceId, async () => jobProcessor(job)),
-    {
-      ...defaultOptions,
-      ...config.bullmq,
-    }
-  );
-  addVerboseQueueLogging<ReindexJobData>(queue, worker, (job) => ({
-    asyncJob: 'AsyncJob/' + job.data.asyncJobId,
-    jobType: job.data.type,
-  }));
-
-  return { queue, worker, name: ReindexQueueName };
+  return { queue, name: ReindexQueueName };
 };
 
 export async function jobProcessor(job: Job<ReindexJobData>): Promise<void> {

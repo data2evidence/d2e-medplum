@@ -9,13 +9,13 @@ import {
   WithId,
 } from '@medplum/core';
 import { Attachment, Binary, Meta, Resource, ResourceType } from '@medplum/fhirtypes';
-import { Job, Queue, QueueBaseOptions, Worker } from 'bullmq';
+import { Job, Queue, QueueBaseOptions } from 'bullmq';
 import fetch from 'node-fetch';
 import { Readable } from 'stream';
 import { getConfig } from '../config/loader';
-import { tryGetRequestContext, tryRunInRequestContext } from '../context';
+import { tryGetRequestContext } from '../context';
 import { getSystemRepo } from '../fhir/repo';
-import { getLogger, globalLogger } from '../logger';
+import { getLogger } from '../logger';
 import { getBinaryStorage } from '../storage/loader';
 import { parseTraceparent } from '../traceparent';
 import { queueRegistry, WorkerInitializer } from './utils';
@@ -58,18 +58,7 @@ export const initDownloadWorker: WorkerInitializer = (config) => {
     },
   });
 
-  const worker = new Worker<DownloadJobData>(
-    queueName,
-    (job) => tryRunInRequestContext(job.data.requestId, job.data.traceId, () => execDownloadJob(job)),
-    {
-      ...defaultOptions,
-      ...config.bullmq,
-    }
-  );
-  worker.on('completed', (job) => globalLogger.info(`Completed job ${job.id} successfully`));
-  worker.on('failed', (job, err) => globalLogger.info(`Failed job ${job?.id} with ${err}`));
-
-  return { queue, worker, name: queueName };
+  return { queue, name: queueName };
 };
 
 /**

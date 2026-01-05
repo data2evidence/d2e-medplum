@@ -1,10 +1,10 @@
 import { BackgroundJobContext, ContentType, createReference, WithId } from '@medplum/core';
 import { Bot, Project, Resource, Timing } from '@medplum/fhirtypes';
-import { Job, Queue, QueueBaseOptions, Worker } from 'bullmq';
+import { Job, Queue, QueueBaseOptions } from 'bullmq';
 import { isValidCron } from 'cron-validator';
 import { executeBot } from '../bots/execute';
 import { getSystemRepo } from '../fhir/repo';
-import { getLogger, globalLogger } from '../logger';
+import { getLogger } from '../logger';
 import { findProjectMembership, queueRegistry, WorkerInitializer } from './utils';
 
 const daysOfWeekConversion = { sun: 0, mon: 1, tue: 2, wed: 3, thu: 4, fri: 5, sat: 6 };
@@ -39,14 +39,7 @@ export const initCronWorker: WorkerInitializer = (config) => {
     },
   });
 
-  const worker = new Worker<CronJobData>(queueName, execBot, {
-    ...defaultOptions,
-    ...config.bullmq,
-  });
-  worker.on('completed', (job) => globalLogger.info(`Completed job ${job.id} successfully`));
-  worker.on('failed', (job, err) => globalLogger.info(`Failed job ${job?.id} with ${err}`));
-
-  return { queue, worker, name: queueName };
+  return { queue, name: queueName };
 };
 
 /**

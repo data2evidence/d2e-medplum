@@ -152,12 +152,12 @@ describe('worker utils', () => {
     test('expected behavior', async () => {
       const queueRegistry = new DefaultQueueRegistry();
 
-      queueRegistry.add(queueName, queue, worker);
+      queueRegistry.add(queueName, queue);
       expect(queueRegistry.get(queueName)).toBe(queue);
       expect(queueRegistry.isClosing(queueName)).toBe(false);
 
       // adding with same name throws
-      expect(() => queueRegistry.add(queueName, queue, worker)).toThrow(`Queue ${queueName} already registered`);
+      expect(() => queueRegistry.add(queueName, queue)).toThrow(`Queue ${queueName} already registered`);
 
       // existing queue is still registered
       expect(queueRegistry.get(queueName)).toBe(queue);
@@ -166,7 +166,7 @@ describe('worker utils', () => {
       // Add second queue
       const queue2 = new Queue(queueName + '2');
       const worker2 = new MockWorker(workerName + '2') as unknown as Worker;
-      queueRegistry.add(queueName + '2', queue2, worker2);
+      queueRegistry.add(queueName + '2', queue2);
 
       // expected getters
       expect(queueRegistry.get(queueName)).toBe(queue);
@@ -210,7 +210,7 @@ describe('worker utils', () => {
       worker.emit('closing', 'artificially emitting');
 
       // still able to add new queues
-      queueRegistry.add(queueName, queue, worker);
+      queueRegistry.add(queueName, queue);
       expect(queueRegistry.get(queueName)).toBe(queue);
       expect(queueRegistry.isClosing(queueName)).toBe(false);
     });

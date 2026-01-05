@@ -21,11 +21,11 @@ import {
   stringify,
 } from '@medplum/core';
 import { Bot, Project, ProjectMembership, Reference, Resource, ResourceType, Subscription } from '@medplum/fhirtypes';
-import { Job, Queue, QueueBaseOptions, Worker } from 'bullmq';
+import { Job, Queue, QueueBaseOptions } from 'bullmq';
 import fetch, { HeadersInit } from 'node-fetch';
 import { createHmac } from 'node:crypto';
 import { executeBot } from '../bots/execute';
-import { getRequestContext, tryGetRequestContext, tryRunInRequestContext } from '../context';
+import { getRequestContext, tryGetRequestContext } from '../context';
 import { buildAccessPolicy } from '../fhir/accesspolicy';
 import { isPreCommitSubscription } from '../fhir/precommit';
 import { Repository, ResendSubscriptionsOptions, getSystemRepo } from '../fhir/repo';
@@ -96,42 +96,7 @@ export const initSubscriptionWorker: WorkerInitializer = (config) => {
     },
   });
 
-  const worker = new Worker<SubscriptionJobData>(
-    queueName,
-    (job) => tryRunInRequestContext(job.data.requestId, job.data.traceId, () => execSubscriptionJob(job)),
-    {
-      ...defaultOptions,
-      ...config.bullmq,
-    }
-  );
-  worker.on('active', (job) => {
-    // Only record queuedDuration on the first attempt
-    if (job.attemptsMade === 0) {
-      recordHistogramValue('medplum.subscription.queuedDuration', (Date.now() - (job.timestamp as number)) / 1000);
-    }
-  });
-  worker.on('completed', (job) => {
-    globalLogger.info(`Completed job ${job.id} successfully`);
-    recordHistogramValue(
-      'medplum.subscription.executionDuration',
-      ((job.finishedOn as number) - (job.processedOn as number)) / 1000
-    );
-    recordHistogramValue(
-      'medplum.subscription.totalDuration',
-      ((job.finishedOn as number) - (job.timestamp as number)) / 1000
-    );
-  });
-  worker.on('failed', (job, err) => {
-    globalLogger.info(`Failed job ${job?.id} with ${err}`);
-    if (job) {
-      recordHistogramValue(
-        'medplum.subscription.failedExecutionDuration',
-        ((job.finishedOn as number) - (job.processedOn as number)) / 1000
-      );
-    }
-  });
-
-  return { queue, worker, name: queueName };
+  return { queue, name: queueName };
 };
 
 /**

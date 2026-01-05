@@ -11,11 +11,12 @@ import { addSubscriptionJobs, initSubscriptionWorker } from './subscription';
 import { queueRegistry, WorkerInitializer } from './utils';
 
 /**
- * Initializes all background workers.
- * @param config - The config to initialize the workers with. Should contain `redis` and optionally `bullmq` fields.
+ * Initializes all background job queues.
+ * Note: Worker processes are no longer initialized here. Only queues are created.
+ * @param config - The config to initialize the queues with. Should contain `redis` and optionally `bullmq` fields.
  */
 export function initWorkers(config: MedplumServerConfig): void {
-  globalLogger.debug('Initializing workers...');
+  globalLogger.debug('Initializing job queues...');
   const initializers: WorkerInitializer[] = [
     initSubscriptionWorker,
     initDownloadWorker,
@@ -26,14 +27,14 @@ export function initWorkers(config: MedplumServerConfig): void {
   ];
 
   for (const initializer of initializers) {
-    const { name, queue, worker } = initializer(config);
-    queueRegistry.add(name, queue, worker);
+    const { name, queue } = initializer(config);
+    queueRegistry.add(name, queue);
   }
-  globalLogger.debug('Workers initialized');
+  globalLogger.debug('Job queues initialized');
 }
 
 /**
- * Shuts down all background workers.
+ * Shuts down all background job queues.
  */
 export async function closeWorkers(): Promise<void> {
   await Promise.all(queueRegistry.closeAll());

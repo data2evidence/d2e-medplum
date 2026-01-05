@@ -1,8 +1,8 @@
 import { getReferenceString, normalizeErrorString, WithId } from '@medplum/core';
 import { AsyncJob, Parameters } from '@medplum/fhirtypes';
-import { Job, JobsOptions, Queue, QueueBaseOptions, Worker } from 'bullmq';
+import { Job, JobsOptions, Queue, QueueBaseOptions } from 'bullmq';
 import * as semver from 'semver';
-import { getRequestContext, tryRunInRequestContext } from '../context';
+import { getRequestContext } from '../context';
 import { AsyncJobExecutor } from '../fhir/operations/utils/asyncjobexecutor';
 import { getSystemRepo, Repository } from '../fhir/repo';
 import { globalLogger } from '../logger';
@@ -24,7 +24,6 @@ import {
 import { MigrationAction, MigrationActionResult } from '../migrations/types';
 import { getRegisteredServers } from '../server-registry';
 import {
-  addVerboseQueueLogging,
   isJobActive,
   isJobCompatible,
   moveToDelayedAndThrow,
@@ -53,16 +52,7 @@ export const initPostDeployMigrationWorker: WorkerInitializer = (config) => {
     },
   });
 
-  const worker = new Worker<PostDeployJobData>(
-    PostDeployMigrationQueueName,
-    async (job) => tryRunInRequestContext(job.data.requestId, job.data.traceId, async () => jobProcessor(job)),
-    {
-      ...config.bullmq,
-      ...defaultOptions,
-    }
-  );
-  addVerboseQueueLogging<PostDeployJobData>(queue, worker, getJobDataLoggingFields);
-  return { queue, worker, name: PostDeployMigrationQueueName };
+  return { queue, name: PostDeployMigrationQueueName };
 };
 
 export async function isClusterCompatible(migrationNumber: number): Promise<boolean> {
