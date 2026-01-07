@@ -35,6 +35,7 @@ import {
   TableDefinition,
 } from './types';
 import { fileURLToPath } from 'node:url';
+
 let baseDir: string = "";
 if (typeof __dirname !== 'undefined') {
   baseDir = __dirname;
