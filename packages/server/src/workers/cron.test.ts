@@ -1,12 +1,12 @@
 import { createReference } from '@medplum/core';
 import { AuditEvent, Bot, Project, ProjectMembership } from '@medplum/fhirtypes';
-import { Job } from 'bullmq';
+// import { Job } from 'bullmq';
 import { randomUUID } from 'crypto';
 import { initAppServices, shutdownApp } from '../app';
 import { loadTestConfig } from '../config/loader';
 import { Repository, getSystemRepo } from '../fhir/repo';
 import { createTestProject, withTestContext } from '../test.setup';
-import { CronJobData, convertTimingToCron, execBot, getCronQueue } from './cron';
+import { convertTimingToCron, execBot, getCronQueue } from './cron';
 
 jest.mock('node-fetch');
 
@@ -215,13 +215,13 @@ describe('Cron Worker', () => {
       });
 
       // Create a job object to pass to execBot
-      const job: Job<CronJobData> = {
+      const job: any = {
         id: bot.id,
         data: {
           resourceType: 'Bot',
           botId: bot.id,
         },
-      } as Job<CronJobData>;
+      } as any;
 
       await execBot(job);
       const bundle = await botRepo.search<AuditEvent>({ resourceType: 'AuditEvent' });
