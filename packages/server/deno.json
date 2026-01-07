@@ -468,5 +468,5 @@
     "/var/tmp/sb-compile-trex/d2e-fhir-server/src/workers/subscription": "./src/workers/subscription.ts",
     "/var/tmp/sb-compile-trex/d2e-fhir-server/src/workers/utils": "./src/workers/utils.ts"
   },
-  "unstable": ["--sloppy-imports", "node-globals", "detect-cjs", "experimental-vm-modules"]
+  "unstable": ["sloppy-imports", "node-globals", "detect-cjs", "experimental-vm-modules"]
 }
