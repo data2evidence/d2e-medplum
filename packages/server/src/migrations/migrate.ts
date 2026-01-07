@@ -79,8 +79,7 @@ export async function main(): Promise<void> {
   const options: BuildMigrationOptions = {
     dbClient,
     skipPostDeployActions: process.argv.includes('--skipPostDeploy'),
-    allowPostDeployActions: process.argv.includes('--allowPostDeploy'),
-    dropUnmatchedIndexes: process.argv.includes('--dropUnmatchedIndexes'),
+    allowPostDeployActions: !process.argv.includes('--skipPostDeploy'), // Allow by default since post-deploy migrations are now synchronous
     analyzeResourceTables: process.argv.includes('--analyzeResourceTables'),
   };
   await dbClient.connect();
@@ -99,7 +98,6 @@ export async function main(): Promise<void> {
 
 export type BuildMigrationOptions = {
   dbClient: Client | Pool | PoolClient;
-  dropUnmatchedIndexes?: boolean;
   skipPostDeployActions?: boolean;
   allowPostDeployActions?: boolean;
   analyzeResourceTables?: boolean;
@@ -141,14 +139,19 @@ export async function generateMigrationActions(options: BuildMigrationOptions): 
   }
 
   const matchedStartTables = new Set<TableDefinition>();
-  for (const targetTable of targetDefinition.tables) {
+  console.log(`Generating migration actions for ${targetDefinition.tables.length} target tables`);
+  for (let i = 0; i < targetDefinition.tables.length; i++) {
+    const targetTable = targetDefinition.tables[i];
+    if (i % 50 === 0 || i === targetDefinition.tables.length - 1) {
+      console.log(`Processing target table ${i + 1}/${targetDefinition.tables.length}: ${targetTable.name}`);
+    }
     const startTable = startDefinition.tables.find((t) => t.name === targetTable.name);
     if (!startTable) {
       actions.push({ type: 'CREATE_TABLE', definition: targetTable });
     } else {
       matchedStartTables.add(startTable);
       actions.push(...generateColumnsActions(ctx, startTable, targetTable));
-      actions.push(...generateIndexesActions(ctx, startTable, targetTable, options));
+      actions.push(...generateIndexesActions(ctx, startTable, targetTable));
     }
   }
 
@@ -181,9 +184,14 @@ async function buildStartDefinition(options: BuildMigrationOptions): Promise<Sch
   }
 
   const tableNames = await getTableNames(db);
+  console.log(`Found ${tableNames.length} tables to analyze`);
   const tables: TableDefinition[] = [];
 
-  for (const tableName of tableNames) {
+  for (let i = 0; i < tableNames.length; i++) {
+    const tableName = tableNames[i];
+    if (i % 50 === 0 || i === tableNames.length - 1) {
+      console.log(`Processing table ${i + 1}/${tableNames.length}: ${tableName}`);
+    }
     tables.push(await getTableDefinition(db, tableName));
   }
 
@@ -1173,8 +1181,7 @@ function getDropIndexQuery(indexName: string): string {
 function generateIndexesActions(
   ctx: GenerateActionsContext,
   startTable: TableDefinition,
-  targetTable: TableDefinition,
-  options: BuildMigrationOptions
+  targetTable: TableDefinition
 ): MigrationAction[] {
   const actions: MigrationAction[] = [];
 
@@ -1205,16 +1212,14 @@ function generateIndexesActions(
   for (const startIndex of startTable.indexes) {
     if (!matchedIndexes.has(startIndex)) {
       console.log(
-        `[${startTable.name}] Existing index should not exist:`,
+        `[${startTable.name}] Dropping unmatched index:`,
         startIndex.indexdef || JSON.stringify(startIndex)
       );
-      if (options?.dropUnmatchedIndexes) {
-        const indexName = parseIndexName(startIndex.indexdef ?? '');
-        if (!indexName) {
-          throw new Error('Could not extract index name from ' + startIndex.indexdef, { cause: startIndex });
-        }
-        actions.push({ type: 'DROP_INDEX', indexName });
+      const indexName = parseIndexName(startIndex.indexdef ?? '');
+      if (!indexName) {
+        throw new Error('Could not extract index name from ' + startIndex.indexdef, { cause: startIndex });
       }
+      actions.push({ type: 'DROP_INDEX', indexName });
     }
   }
   return actions;

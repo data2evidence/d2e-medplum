@@ -325,7 +325,6 @@ superAdminRouter.post(
 
     const migrationActions = await generateMigrationActions({
       dbClient: getDatabasePool(DatabaseMode.WRITER),
-      dropUnmatchedIndexes: true,
       allowPostDeployActions: true,
     });
 
