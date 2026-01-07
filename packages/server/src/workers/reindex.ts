@@ -9,7 +9,7 @@ import {
   WithId,
 } from '@medplum/core';
 import { AsyncJob, Bundle, Parameters, ParametersParameter, Resource, ResourceType } from '@medplum/fhirtypes';
-import { Job, Queue, QueueBaseOptions } from 'bullmq';
+// import { Job, Queue, QueueBaseOptions } from 'bullmq';
 import { getConfig } from '../config/loader';
 import { getRequestContext } from '../context';
 import { DatabaseMode, getDatabasePool, getDefaultStatementTimeout } from '../database';
@@ -63,26 +63,26 @@ const defaultProgressLogThreshold = 50_000;
 // to prevent workers running older versions of the reindex worker from processing jobs
 export const REINDEX_WORKER_VERSION = 2;
 
-export const initReindexWorker: WorkerInitializer = (config) => {
-  const defaultOptions: QueueBaseOptions = {
-    connection: config.redis,
-  };
+// export const initReindexWorker: WorkerInitializer = (config) => {
+//   const defaultOptions: QueueBaseOptions = {
+//     connection: config.redis,
+//   };
 
-  const queue = new Queue<ReindexJobData>(ReindexQueueName, {
-    ...defaultOptions,
-    defaultJobOptions: {
-      attempts: 1,
-      backoff: {
-        type: 'exponential',
-        delay: 1000,
-      },
-    },
-  });
+//   const queue = new Queue<ReindexJobData>(ReindexQueueName, {
+//     ...defaultOptions,
+//     defaultJobOptions: {
+//       attempts: 1,
+//       backoff: {
+//         type: 'exponential',
+//         delay: 1000,
+//       },
+//     },
+//   });
 
-  return { queue, name: ReindexQueueName };
-};
+//   return { queue, name: ReindexQueueName };
+// };
 
-export async function jobProcessor(job: Job<ReindexJobData>): Promise<void> {
+export async function jobProcessor(job: any): Promise<void> {
   const result = await new ReindexJob().execute(job, job.data);
   if (result === 'ineligible') {
     await moveToDelayedAndThrow(job, 'Reindex job delayed since worker is not eligible to execute it');
@@ -126,7 +126,7 @@ export class ReindexJob {
   }
 
   private async checkForQueueClosing(
-    job: Job<ReindexJobData> | undefined,
+    job: any,
     asyncJob: WithId<AsyncJob>,
     nextJobData: ReindexJobData
   ): Promise<void> {
@@ -145,7 +145,7 @@ export class ReindexJob {
     }
   }
 
-  async execute(job: Job<ReindexJobData> | undefined, inputJobData: ReindexJobData): Promise<ReindexExecuteResult> {
+  async execute(job: any, inputJobData: ReindexJobData): Promise<ReindexExecuteResult> {
     const asyncJob = await this.refreshAsyncJob(this.systemRepo, inputJobData.asyncJobId);
 
     if (inputJobData.minReindexWorkerVersion && inputJobData.minReindexWorkerVersion > REINDEX_WORKER_VERSION) {
@@ -169,7 +169,7 @@ export class ReindexJob {
   }
 
   private async executeMainLoop(
-    job: Job<ReindexJobData> | undefined,
+    job: any,
     asyncJob: WithId<AsyncJob>,
     inputJobData: ReindexJobData
   ): Promise<ReindexExecuteResult> {
@@ -444,11 +444,11 @@ function formatReindexResult(result: ReindexResult, resourceType: string): Param
  * This is used by the unit tests.
  * @returns The reindex queue (if available).
  */
-export function getReindexQueue(): Queue<ReindexJobData> | undefined {
+export function getReindexQueue(): any | undefined {
   return queueRegistry.get(ReindexQueueName);
 }
 
-async function addReindexJobData(job: ReindexJobData): Promise<Job<ReindexJobData>> {
+async function addReindexJobData(job: ReindexJobData): Promise<any> {
   const queue = getReindexQueue();
   if (!queue) {
     throw new Error(`Job queue ${ReindexQueueName} not available`);
@@ -461,7 +461,7 @@ export async function addReindexJob(
   asyncJob: WithId<AsyncJob>,
   searchFilter?: SearchRequest,
   maxResourceVersion?: number
-): Promise<Job<ReindexJobData>> {
+): Promise<any> {
   const jobData = prepareReindexJobData(resourceTypes, asyncJob.id, searchFilter, maxResourceVersion);
   return addReindexJobData(jobData);
 }

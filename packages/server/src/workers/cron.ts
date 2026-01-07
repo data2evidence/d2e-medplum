@@ -1,6 +1,6 @@
 import { BackgroundJobContext, ContentType, createReference, WithId } from '@medplum/core';
 import { Bot, Project, Resource, Timing } from '@medplum/fhirtypes';
-import { Job, Queue, QueueBaseOptions } from 'bullmq';
+// import { Job, Queue, QueueBaseOptions } from 'bullmq';
 import { isValidCron } from 'cron-validator';
 import { executeBot } from '../bots/execute';
 import { getSystemRepo } from '../fhir/repo';
@@ -23,31 +23,31 @@ export interface CronJobData {
 
 const queueName = 'CronQueue';
 
-export const initCronWorker: WorkerInitializer = (config) => {
-  const defaultOptions: QueueBaseOptions = {
-    connection: config.redis,
-  };
+// export const initCronWorker: WorkerInitializer = (config) => {
+//   const defaultOptions: QueueBaseOptions = {
+//     connection: config.redis,
+//   };
 
-  const queue = new Queue<CronJobData>(queueName, {
-    ...defaultOptions,
-    defaultJobOptions: {
-      attempts: 3,
-      backoff: {
-        type: 'exponential',
-        delay: 1000,
-      },
-    },
-  });
+//   const queue = new Queue<CronJobData>(queueName, {
+//     ...defaultOptions,
+//     defaultJobOptions: {
+//       attempts: 3,
+//       backoff: {
+//         type: 'exponential',
+//         delay: 1000,
+//       },
+//     },
+//   });
 
-  return { queue, name: queueName };
-};
+//   return { queue, name: queueName };
+// };
 
 /**
  * Returns the Cron queue instance.
  * This is used by the unit tests.
  * @returns The Cron queue (if available).
  */
-export function getCronQueue(): Queue<CronJobData> | undefined {
+export function getCronQueue(): any | undefined {
   return queueRegistry.get(queueName);
 }
 
@@ -172,7 +172,7 @@ export function convertTimingToCron(timing: Timing): string | undefined {
   return `${minute} ${hour} ${dayOfMonth} ${month} ${dayOfWeek}`;
 }
 
-export async function execBot(job: Job<CronJobData>): Promise<void> {
+export async function execBot(job: any): Promise<void> {
   const systemRepo = getSystemRepo();
   const bot = await systemRepo.readReference<Bot>({ reference: 'Bot/' + job.data.botId });
   const project = bot.meta?.project as string;

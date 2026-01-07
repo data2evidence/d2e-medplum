@@ -9,7 +9,7 @@ import {
   WithId,
 } from '@medplum/core';
 import { Attachment, Binary, Meta, Resource, ResourceType } from '@medplum/fhirtypes';
-import { Job, Queue, QueueBaseOptions } from 'bullmq';
+// import { Job, Queue, QueueBaseOptions } from 'bullmq';
 import fetch from 'node-fetch';
 import { Readable } from 'stream';
 import { getConfig } from '../config/loader';
@@ -42,31 +42,31 @@ export interface DownloadJobData {
 const queueName = 'DownloadQueue';
 const jobName = 'DownloadJobData';
 
-export const initDownloadWorker: WorkerInitializer = (config) => {
-  const defaultOptions: QueueBaseOptions = {
-    connection: config.redis,
-  };
+// export const initDownloadWorker: WorkerInitializer = (config) => {
+//   const defaultOptions: QueueBaseOptions = {
+//     connection: config.redis,
+//   };
 
-  const queue = new Queue<DownloadJobData>(queueName, {
-    ...defaultOptions,
-    defaultJobOptions: {
-      attempts: 3,
-      backoff: {
-        type: 'exponential',
-        delay: 1000,
-      },
-    },
-  });
+//   const queue = new Queue<DownloadJobData>(queueName, {
+//     ...defaultOptions,
+//     defaultJobOptions: {
+//       attempts: 3,
+//       backoff: {
+//         type: 'exponential',
+//         delay: 1000,
+//       },
+//     },
+//   });
 
-  return { queue, name: queueName };
-};
+//   return { queue, name: queueName };
+// };
 
 /**
  * Returns the download queue instance.
  * This is used by the unit tests.
  * @returns The download queue (if available).
  */
-export function getDownloadQueue(): Queue<DownloadJobData> | undefined {
+export function getDownloadQueue(): any | undefined {
   return queueRegistry.get(queueName);
 }
 
@@ -145,7 +145,7 @@ async function addDownloadJobData(job: DownloadJobData): Promise<void> {
  * Executes a download job.
  * @param job - The download job details.
  */
-export async function execDownloadJob<T extends Resource = Resource>(job: Job<DownloadJobData>): Promise<void> {
+export async function execDownloadJob<T extends Resource = Resource>(job: any): Promise<void> {
   const systemRepo = getSystemRepo();
   const log = getLogger();
   const { resourceType, id, url } = job.data;

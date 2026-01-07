@@ -3,8 +3,8 @@ import os from 'node:os';
 // import v8 from 'node:v8';
 import { DatabaseMode, getDatabasePool } from '../database';
 import { heartbeat } from '../heartbeat';
-import { getCronQueue } from '../workers/cron';
-import { getSubscriptionQueue } from '../workers/subscription';
+// import { getCronQueue } from '../workers/cron';
+// import { getSubscriptionQueue } from '../workers/subscription';
 
 // This file includes OpenTelemetry helpers.
 // Note that this file is related but separate from the OpenTelemetry initialization code in instrumentation.ts.
@@ -130,17 +130,17 @@ export function initOtelHeartbeat(): void {
     //   BASE_METRIC_OPTIONS
     // );
 
-    const subscriptionQueue = getSubscriptionQueue();
-    if (subscriptionQueue) {
-      setGauge('medplum.subscription.waitingCount', await subscriptionQueue.getWaitingCount());
-      setGauge('medplum.subscription.delayedCount', await subscriptionQueue.getDelayedCount());
-    }
+    // const subscriptionQueue = getSubscriptionQueue();
+    // if (subscriptionQueue) {
+    //   setGauge('medplum.subscription.waitingCount', await subscriptionQueue.getWaitingCount());
+    //   setGauge('medplum.subscription.delayedCount', await subscriptionQueue.getDelayedCount());
+    // }
 
-    const cronQueue = getCronQueue();
-    if (cronQueue) {
-      setGauge('medplum.cron.waitingCount', await cronQueue.getWaitingCount());
-      setGauge('medplum.cron.delayedCount', await cronQueue.getDelayedCount());
-    }
+    // const cronQueue = getCronQueue();
+    // if (cronQueue) {
+    //   setGauge('medplum.cron.waitingCount', await cronQueue.getWaitingCount());
+    //   setGauge('medplum.cron.delayedCount', await cronQueue.getDelayedCount());
+    // }
   };
   heartbeat.addEventListener('heartbeat', otelHeartbeatListener);
 }

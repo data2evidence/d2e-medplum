@@ -1,6 +1,6 @@
 import { WithId } from '@medplum/core';
 import { AsyncJob } from '@medplum/fhirtypes';
-import { Job } from 'bullmq';
+// import { Job } from 'bullmq';
 import { Repository } from '../../fhir/repo';
 import { MigrationAction } from '../types';
 
@@ -29,7 +29,7 @@ export interface PostDeployMigration<T extends PostDeployJobData = PostDeployJob
    * 'ineligible' if the processor decided it was not capable of running the job, typically
    *            due to being an outdated version of Medplum.
    */
-  run(repo: Repository, job: Job<T> | undefined, data: T): Promise<PostDeployJobRunResult>;
+  run(repo: Repository, job: any, data: T): Promise<PostDeployJobRunResult>;
 }
 
 // Custom Jobs

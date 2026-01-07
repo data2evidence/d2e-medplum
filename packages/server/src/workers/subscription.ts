@@ -21,7 +21,7 @@ import {
   stringify,
 } from '@medplum/core';
 import { Bot, Project, ProjectMembership, Reference, Resource, ResourceType, Subscription } from '@medplum/fhirtypes';
-import { Job, Queue, QueueBaseOptions } from 'bullmq';
+// import { Job, Queue, QueueBaseOptions } from 'bullmq';
 import fetch, { HeadersInit } from 'node-fetch';
 import { createHmac } from 'node:crypto';
 import { executeBot } from '../bots/execute';
@@ -80,33 +80,33 @@ export interface SubscriptionJobData {
 const queueName = 'SubscriptionQueue';
 const jobName = 'SubscriptionJobData';
 
-export const initSubscriptionWorker: WorkerInitializer = (config) => {
-  const defaultOptions: QueueBaseOptions = {
-    connection: config.redis,
-  };
+// export const initSubscriptionWorker: WorkerInitializer = (config) => {
+//   const defaultOptions: QueueBaseOptions = {
+//     connection: config.redis,
+//   };
 
-  const queue = new Queue<SubscriptionJobData>(queueName, {
-    ...defaultOptions,
-    defaultJobOptions: {
-      attempts: MAX_JOB_ATTEMPTS, // 1 second * 2^18 = 73 hours
-      backoff: {
-        type: 'exponential',
-        delay: 1000,
-      },
-    },
-  });
+//   const queue = new Queue<SubscriptionJobData>(queueName, {
+//     ...defaultOptions,
+//     defaultJobOptions: {
+//       attempts: MAX_JOB_ATTEMPTS, // 1 second * 2^18 = 73 hours
+//       backoff: {
+//         type: 'exponential',
+//         delay: 1000,
+//       },
+//     },
+//   });
 
-  return { queue, name: queueName };
-};
+//   return { queue, name: queueName };
+// };
 
 /**
  * Returns the subscription queue instance.
  * This is used by the unit tests.
  * @returns The subscription queue (if available).
  */
-export function getSubscriptionQueue(): Queue<SubscriptionJobData> | undefined {
-  return queueRegistry.get(queueName);
-}
+// export function getSubscriptionQueue(): Queue<SubscriptionJobData> | undefined {
+//   return queueRegistry.get(queueName);
+// }
 
 /**
  * Checks if this resource should create a notification for this `Subscription` based on the access policy that should be applied for this `Subscription`.
@@ -363,7 +363,7 @@ async function getSubscriptions(resource: Resource, project: WithId<Project>): P
  * Executes a subscription job.
  * @param job - The subscription job details.
  */
-export async function execSubscriptionJob(job: Job<SubscriptionJobData>): Promise<void> {
+export async function execSubscriptionJob(job: any): Promise<void> {
   const systemRepo = getSystemRepo();
   const { subscriptionId, channelType, resourceType, id, versionId, interaction, requestTime, verbose } = job.data;
   const logger = getLogger();
@@ -472,7 +472,7 @@ async function tryGetCurrentVersion<T extends Resource = Resource>(
  * @param requestTime - The request time.
  */
 async function sendRestHook(
-  job: Job<SubscriptionJobData>,
+  job: any,
   subscription: WithId<Subscription>,
   resource: Resource,
   interaction: BackgroundJobInteraction,
@@ -546,7 +546,7 @@ async function sendRestHook(
  * @returns The HTTP request headers.
  */
 function buildRestHookHeaders(
-  job: Job<SubscriptionJobData>,
+  job: any,
   subscription: WithId<Subscription>,
   resource: Resource,
   interaction: BackgroundJobInteraction,
@@ -638,7 +638,7 @@ async function execBot(
   });
 }
 
-async function catchJobError(subscription: Subscription, job: Job<SubscriptionJobData>, err: any): Promise<void> {
+async function catchJobError(subscription: Subscription, job: any, err: any): Promise<void> {
   const maxJobAttempts =
     getExtension(subscription, 'https://medplum.com/fhir/StructureDefinition/subscription-max-attempts')
       ?.valueInteger ?? DEFAULT_RETRIES;

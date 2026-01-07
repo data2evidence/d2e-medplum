@@ -2,11 +2,17 @@ import { BackgroundJobContext, WithId } from '@medplum/core';
 import { Resource } from '@medplum/fhirtypes';
 import { MedplumServerConfig } from '../config/types';
 import { getLogger, globalLogger } from '../logger';
-import { initBatchWorker } from './batch';
-import { addCronJobs, initCronWorker } from './cron';
-import { addDownloadJobs, initDownloadWorker } from './download';
-import { initReindexWorker } from './reindex';
-import { addSubscriptionJobs, initSubscriptionWorker } from './subscription';
+// import { initBatchWorker } from './batch';
+import { addCronJobs, 
+  //initCronWorker 
+} from './cron';
+import { addDownloadJobs, 
+  //initDownloadWorker 
+  } from './download';
+// import { initReindexWorker } from './reindex';
+import { addSubscriptionJobs,
+  //initSubscriptionWorker 
+  } from './subscription';
 import { queueRegistry, WorkerInitializer } from './utils';
 
 /**
@@ -16,13 +22,14 @@ import { queueRegistry, WorkerInitializer } from './utils';
  */
 export function initWorkers(config: MedplumServerConfig): void {
   globalLogger.debug('Initializing job queues...');
-  const initializers: WorkerInitializer[] = [
-    initSubscriptionWorker,
-    initDownloadWorker,
-    initCronWorker,
-    initReindexWorker,
-    initBatchWorker,
-  ];
+  const initializers: WorkerInitializer[] = []
+  //  [
+  //   initSubscriptionWorker,
+  //   initDownloadWorker,
+  //   initCronWorker,
+  //   initReindexWorker,
+  //   initBatchWorker,
+  // ];
 
   for (const initializer of initializers) {
     const { name, queue } = initializer(config);

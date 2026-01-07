@@ -16,7 +16,6 @@
     "os": "node:os",
     "http": "node:http",
     "fs": "node:fs",
-    "@appsignal/opentelemetry-instrumentation-bullmq": "npm:@appsignal/opentelemetry-instrumentation-bullmq@0.7.3",
     "@aws-sdk/client-cloudwatch-logs": "npm:@aws-sdk/client-cloudwatch-logs@3.849.0",
     "@aws-sdk/client-comprehendmedical": "npm:@aws-sdk/client-comprehendmedical@3.848.0",
     "@aws-sdk/client-lambda": "npm:@aws-sdk/client-lambda@3.851.0",
@@ -50,7 +49,6 @@
     "bcryptjs": "npm:bcryptjs@3.0.2",
     "body-parser": "npm:body-parser@2.2.0",
     "bowser": "npm:bowser@2.11.0",
-    "bullmq": "npm:bullmq@5.56.8",
     "bytes": "npm:bytes@3.1.2",
     "compression": "npm:compression@1.8.1",
     "cookie-parser": "npm:cookie-parser@1.4.7",
@@ -294,6 +292,7 @@
     "/var/tmp/sb-compile-trex/d2e-fhir-server/src/migrations/schema/v93": "./src/migrations/schema/v93.ts",
     "/var/tmp/sb-compile-trex/d2e-fhir-server/src/migrations/schema/v94": "./src/migrations/schema/v94.ts",
     "/var/tmp/sb-compile-trex/d2e-fhir-server/src/migrations/schema/v95": "./src/migrations/schema/v95.ts",
+    "/var/tmp/sb-compile-trex/d2e-fhir-server/src/migrations/schema/v96": "./src/migrations/schema/v96.ts",
     "/var/tmp/sb-compile-trex/d2e-fhir-server/src/migrations/schema": "./src/migrations/schema/index.ts",
     "/var/tmp/sb-compile-trex/d2e-fhir-server/src/migrations/schema/types": "./src/migrations/schema/types.ts",
     "/var/tmp/sb-compile-trex/d2e-fhir-server/src/migrations/types": "./src/migrations/types.ts",
@@ -469,5 +468,5 @@
     "/var/tmp/sb-compile-trex/d2e-fhir-server/src/workers/subscription": "./src/workers/subscription.ts",
     "/var/tmp/sb-compile-trex/d2e-fhir-server/src/workers/utils": "./src/workers/utils.ts"
   },
-  "unstable": ["sloppy-imports", "node-globals", "detect-cjs", "experimental-vm-modules"]
+  "unstable": ["node-globals", "detect-cjs", "experimental-vm-modules"]
 }

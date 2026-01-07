@@ -12,7 +12,7 @@ import {
   Resource,
   Subscription,
 } from '@medplum/fhirtypes';
-import { DelayedError, Job, Queue, Worker } from 'bullmq';
+// import { DelayedError, Job, Queue, Worker } from 'bullmq';
 import * as semver from 'semver';
 import { MedplumServerConfig } from '../config/types';
 import { buildTracingExtension } from '../context';
@@ -20,6 +20,8 @@ import { getSystemRepo, Repository } from '../fhir/repo';
 import { getLogger, globalLogger } from '../logger';
 import { AuditEventOutcome } from '../util/auditevent';
 import { getServerVersion } from '../util/version';
+import { error } from 'console';
+import { ServiceException } from '@aws-sdk/client-lambda';
 
 export function findProjectMembership(project: string, profile: Reference): Promise<ProjectMembership | undefined> {
   const systemRepo = getSystemRepo();
@@ -192,16 +194,16 @@ export async function updateAsyncJobOutput(
   );
 }
 
-export type WorkerInitializer = (config: MedplumServerConfig) => { queue: Queue; name: string };
+export type WorkerInitializer = (config: MedplumServerConfig) => { queue: any; name: string };
 
 export interface QueueRegistry {
-  add(name: string, queue: Queue): void;
-  get<T>(name: string): Queue<T> | undefined;
+  add(name: string, queue: any): void;
+  get<T>(name: string): any | undefined;
   isClosing(name: string): boolean | undefined;
   closeAll(): Promise<void>[];
 }
 
-type QueueEntry = { queue: Queue | undefined; isClosing: boolean };
+type QueueEntry = { queue: any | undefined; isClosing: boolean };
 
 // exported for testing only, use `queueRegistry` for non-test code
 export class DefaultQueueRegistry implements QueueRegistry {
@@ -211,7 +213,7 @@ export class DefaultQueueRegistry implements QueueRegistry {
     this.queueMap = Object.create(null);
   }
 
-  add(name: string, queue: Queue): void {
+  add(name: string, queue: any): void {
     if (this.queueMap[name]) {
       throw new Error(`Queue ${name} already registered`);
     }
@@ -219,8 +221,8 @@ export class DefaultQueueRegistry implements QueueRegistry {
     this.queueMap[name] = { queue, isClosing: false };
   }
 
-  get<T>(name: string): Queue<T> | undefined {
-    return this.queueMap[name]?.queue as Queue<T> | undefined;
+  get<T>(name: string): any | undefined {
+    return this.queueMap[name]?.queue as any | undefined;
   }
 
   private async close(name: string): Promise<void> {
@@ -251,7 +253,7 @@ export class DefaultQueueRegistry implements QueueRegistry {
 
 export const queueRegistry: QueueRegistry = new DefaultQueueRegistry();
 
-function getFinishedJobFieldsForLogging(job: Job): Record<string, string | number | undefined> {
+function getFinishedJobFieldsForLogging(job: any): Record<string, string | number | undefined> {
   return {
     jobId: job.id,
     jobTimestamp: job.timestamp,
@@ -265,9 +267,9 @@ function getFinishedJobFieldsForLogging(job: Job): Record<string, string | numbe
   };
 }
 export function addVerboseQueueLogging<TDataType>(
-  queue: Queue,
-  worker: Worker,
-  getJobDataLoggingFields?: (job: Job<TDataType>) => Record<string, string | number | undefined>
+  queue: any,
+  worker: any,
+  getJobDataLoggingFields?: (job: any) => Record<string, string | number | undefined>
 ): void {
   worker.on('active', (job, prev) => {
     globalLogger.info(`${queue.name} worker: active`, {
@@ -312,7 +314,7 @@ export function addVerboseQueueLogging<TDataType>(
   });
 }
 
-export async function moveToDelayedAndThrow(job: Job, reason: string): Promise<never> {
+export async function moveToDelayedAndThrow(job: any, reason: string): Promise<never> {
   if (job.token) {
     const delayMs = 60_000;
     globalLogger.info(reason, {
@@ -321,7 +323,7 @@ export async function moveToDelayedAndThrow(job: Job, reason: string): Promise<n
       delayMs,
     });
     await job.moveToDelayed(Date.now() + delayMs, job.token);
-    throw new DelayedError(reason);
+    throw '';
   }
   globalLogger.error('Cannot delay job since job.token is not available', {
     queueName: job.queueName,

@@ -1,8 +1,7 @@
 import { splitN } from '@medplum/core';
 import { mkdtempSync, readFileSync } from 'fs';
 import { tmpdir } from 'os';
-import { join, resolve, dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { join, resolve } from 'path';
 import { loadAwsConfig } from '../cloud/aws/config';
 import { loadAzureConfig } from '../cloud/azure/config';
 // import { loadGcpConfig } from '../cloud/gcp/config';
@@ -148,14 +147,15 @@ function loadEnvConfig(): MedplumServerConfig {
 async function loadFileConfig(path: string): Promise<MedplumServerConfig> {
   try{
     let baseDir: string = "";
-    if (typeof __dirname !== 'undefined') {
-      baseDir = __dirname;
-      // @ts-expect-error
-    } else if (typeof import.meta !== 'undefined') {
-      // @ts-expect-error
-      baseDir = dirname(fileURLToPath(import.meta.url));
-      baseDir = `/usr/src/data/plugins/node_modules/@data2evidence/d2e-fhir-server/src/config`;
-    }
+    baseDir = __dirname;
+    // if (typeof __dirname !== 'undefined') {
+    //   baseDir = __dirname;
+    //   // @ts-expect-error
+    // } else if (typeof import.meta !== 'undefined') {
+    //   // @ts-expect-error
+    //   baseDir = dirname(fileURLToPath(import.meta.url));
+    //   baseDir = `/usr/src/data/plugins/node_modules/@data2evidence/d2e-fhir-server/src/config`;
+    // }
     return JSON.parse(readFileSync(
       resolve(baseDir, '../../', path),
       { encoding: 'utf8' }

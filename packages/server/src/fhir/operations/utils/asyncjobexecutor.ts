@@ -1,6 +1,6 @@
 import { OperationOutcomeError, WithId, accepted } from '@medplum/core';
 import { AsyncJob, Parameters } from '@medplum/fhirtypes';
-import { DelayedError } from 'bullmq';
+// import { DelayedError } from 'bullmq';
 import { Request, Response } from 'express';
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { getConfig } from '../../../config/loader';
@@ -11,6 +11,7 @@ import { markPostDeployMigrationCompleted } from '../../../migration-sql';
 import { maybeAutoRunPendingPostDeployMigration } from '../../../migrations/migration-utils';
 import { sendOutcome } from '../../outcomes';
 import { Repository, getSystemRepo } from '../../repo';
+import { any } from 'zod';
 
 export class AsyncJobExecutor {
   readonly repo: Repository;
@@ -129,7 +130,7 @@ export class AsyncJobExecutor {
     // A job throwing `DelayedError` means the job has been delayed/re-queued,
     // so the job should not fail. Instead re-throw the error for BullMQ
     // to handle.
-    if (err instanceof DelayedError) {
+    if (err) {
       throw err;
     }
 
