@@ -81,7 +81,7 @@ jobs:
       - name: Install dependencies
         if: ${{ matrix.DESTPATH }}
         run: |
-          npm install -g deno@2.1.13
+          npm install -g deno@2.5.6
           node ./install-deno-deps.js ${{ matrix.PKGPATH }}
           cd ${{ matrix.PKGPATH }}
           echo "@data2evidence:registry=https://npm.pkg.github.com" >> ./.npmrc
