@@ -36,7 +36,7 @@ import { getRedis } from '../redis';
 import { SubEventsOptions } from '../subscriptions/websockets';
 import { parseTraceparent } from '../traceparent';
 import { AuditEventOutcome } from '../util/auditevent';
-import { WorkerInitializer, createAuditEvent, findProjectMembership, isJobSuccessful, queueRegistry } from './utils';
+import { createAuditEvent, findProjectMembership, isJobSuccessful, queueRegistry } from './utils';
 
 /**
  * The timeout for outbound rest-hook subscription HTTP requests.
@@ -48,7 +48,7 @@ const REQUEST_TIMEOUT = 120_000; // 120 seconds, 2 mins
  * The upper limit on the number of times a job can be retried.
  * Using exponential backoff, 18 retries is about 73 hours.
  */
-const MAX_JOB_ATTEMPTS = 18;
+// const MAX_JOB_ATTEMPTS = 18;
 
 /**
  * The default number of times a job will be retried.

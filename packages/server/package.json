@@ -27,7 +27,6 @@
     "trex_build": "tbuild node_modules/@data2evidence/trex"
   },
   "dependencies": {
-    "@appsignal/opentelemetry-instrumentation-bullmq": "0.7.3",
     "@aws-sdk/client-cloudwatch-logs": "3.849.0",
     "@aws-sdk/client-comprehendmedical": "3.848.0",
     "@aws-sdk/client-lambda": "3.851.0",
@@ -65,7 +64,6 @@
     "bcryptjs": "3.0.2",
     "body-parser": "2.2.0",
     "bowser": "2.11.0",
-    "bullmq": "5.56.8",
     "bytes": "3.1.2",
     "compression": "1.8.1",
     "cookie-parser": "1.4.7",

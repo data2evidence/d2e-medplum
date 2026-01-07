@@ -18,7 +18,7 @@ import { getSystemRepo } from '../fhir/repo';
 import { getLogger } from '../logger';
 import { getBinaryStorage } from '../storage/loader';
 import { parseTraceparent } from '../traceparent';
-import { queueRegistry, WorkerInitializer } from './utils';
+import { queueRegistry } from './utils';
 
 /*
  * The download worker inspects resources,

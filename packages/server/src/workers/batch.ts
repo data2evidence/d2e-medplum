@@ -17,7 +17,7 @@ import { uploadBinaryData } from '../fhir/binary';
 import { AsyncJobExecutor } from '../fhir/operations/utils/asyncjobexecutor';
 import { getSystemRepo } from '../fhir/repo';
 import { getLogger } from '../logger';
-import { queueRegistry, WorkerInitializer } from './utils';
+import { queueRegistry } from './utils';
 
 /*
  * The batch worker runs a batch asynchronously,

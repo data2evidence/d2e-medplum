@@ -25,7 +25,6 @@ import {
   moveToDelayedAndThrow,
   queueRegistry,
   updateAsyncJobOutput,
-  WorkerInitializer,
 } from './utils';
 
 /*

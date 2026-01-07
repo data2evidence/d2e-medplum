@@ -20,8 +20,6 @@ import { getSystemRepo, Repository } from '../fhir/repo';
 import { getLogger, globalLogger } from '../logger';
 import { AuditEventOutcome } from '../util/auditevent';
 import { getServerVersion } from '../util/version';
-import { error } from 'console';
-import { ServiceException } from '@aws-sdk/client-lambda';
 
 export function findProjectMembership(project: string, profile: Reference): Promise<ProjectMembership | undefined> {
   const systemRepo = getSystemRepo();
@@ -271,7 +269,7 @@ export function addVerboseQueueLogging<TDataType>(
   worker: any,
   getJobDataLoggingFields?: (job: any) => Record<string, string | number | undefined>
 ): void {
-  worker.on('active', (job, prev) => {
+  worker.on('active', (job: any, prev: any) => {
     globalLogger.info(`${queue.name} worker: active`, {
       jobId: job.id,
       attemptsMade: job.attemptsMade,
@@ -280,13 +278,13 @@ export function addVerboseQueueLogging<TDataType>(
       prev,
     });
   });
-  worker.on('closing', async (message) => {
+  worker.on('closing', async (message: any) => {
     globalLogger.info(`${queue.name} worker: closing`, { message });
   });
   worker.on('closed', async () => {
     globalLogger.info(`${queue.name} worker: closed`);
   });
-  worker.on('completed', async (job, result, prev) => {
+  worker.on('completed', async (job: any, result: any, prev: any) => {
     globalLogger.info(`${queue.name} worker: completed`, {
       ...getFinishedJobFieldsForLogging(job),
       ...getJobDataLoggingFields?.(job),
@@ -294,13 +292,13 @@ export function addVerboseQueueLogging<TDataType>(
       prev,
     });
   });
-  worker.on('error', (failedReason) =>
+  worker.on('error', (failedReason: any) =>
     globalLogger.info(`${queue.name} worker: error`, {
       error: failedReason instanceof Error ? failedReason.message : String(failedReason),
       stack: failedReason instanceof Error ? failedReason.stack : undefined,
     })
   );
-  worker.on('failed', (job, error, prev) =>
+  worker.on('failed', (job: any, error: any, prev: any) =>
     globalLogger.info(`${queue.name} worker: failed`, {
       ...(job && getFinishedJobFieldsForLogging(job)),
       ...(job && getJobDataLoggingFields?.(job)),
@@ -309,7 +307,7 @@ export function addVerboseQueueLogging<TDataType>(
       stack: error instanceof Error ? error.stack : undefined,
     })
   );
-  worker.on('stalled', (jobId, prev) => {
+  worker.on('stalled', (jobId: any, prev: any) => {
     globalLogger.info(`${queue.name} worker: stalled`, { jobId, prev });
   });
 }

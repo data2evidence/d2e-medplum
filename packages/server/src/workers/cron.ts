@@ -5,7 +5,7 @@ import { isValidCron } from 'cron-validator';
 import { executeBot } from '../bots/execute';
 import { getSystemRepo } from '../fhir/repo';
 import { getLogger } from '../logger';
-import { findProjectMembership, queueRegistry, WorkerInitializer } from './utils';
+import { findProjectMembership, queueRegistry } from './utils';
 
 const daysOfWeekConversion = { sun: 0, mon: 1, tue: 2, wed: 3, thu: 4, fri: 5, sat: 6 };
 const MAX_BOTS_PER_PAGE = 500;
