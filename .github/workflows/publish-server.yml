@@ -128,6 +128,7 @@ jobs:
           echo "@data2evidence:registry=https://npm.pkg.github.com" >> ./.npmrc
           echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> ./.npmrc
           npm i @data2evidence/trex
+          deno install --allow-scripts
           npm run trex_build
       - name: Use Node.js - OSS Develop
         uses: actions/setup-node@v4
