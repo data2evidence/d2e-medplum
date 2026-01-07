@@ -154,7 +154,7 @@ jobs:
         env:
           CI: ${{ matrix.NPM != 'yarn' }}
           SHOULD_PUBLISH: ${{ github.ref_name == 'main' || github.ref_name == 'csafreen/remove_workers_server' || github.event_name == 'workflow_dispatch' || ( github.event_name == 'pull_request' && !github.event.pull_request.draft ) }}
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_PROJECT_TOKEN }}
         run: |
           cd ${{ matrix.DESTPATH || matrix.PKGPATH }}
           # Overwrite .npmrc with Azure DevOps registry settings
