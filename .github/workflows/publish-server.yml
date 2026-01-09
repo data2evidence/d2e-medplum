@@ -118,28 +118,39 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: | 
           cp package.json package.org.json
+
+          # Create destination directory
           sudo mkdir -p ${{ matrix.DESTPATH }}
           sudo chown runner:docker ${{ matrix.DESTPATH }}
+
+          # Copy files to new destination
           cp -a . ${{ matrix.DESTPATH }}
           cd ${{ matrix.DESTPATH }}
           
           # Remove the deno.lock file to let the container's Deno version recreate it
           rm -f deno.lock
-         
-          export TREX_DOCKER_TAG=sha256:12df563679a5e952b50a4d2a4d34dc598c05787193164eee84303909c059a0a8
-          #$(grep -m1 '^FROM ' $GITHUB_WORKSPACE/services/trex/Dockerfile | sed -E 's/.*@(sha256:[a-f0-9]+).*/\1/')
-          echo "Using TREX_DOCKER_TAG=$TREX_DOCKER_TAG"
-          
+        
           # Configure npm registry
           echo "@data2evidence:registry=https://npm.pkg.github.com" >> ./.npmrc
           echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> ./.npmrc
           
-          # Install TREX CLI
+          # Install TREX in the ORIGINAL node_modules location
+          mkdir -p /usr/src/data/plugins/node_modules/@data2evidence
+          cd /usr/src/data/plugins/node_modules/@data2evidence
+          npm init -y > /dev/null 2>&1
+          echo "@data2evidence:registry=https://npm.pkg.github.com" >> ./.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> ./.npmrc
           npm i @data2evidence/trex
           
+          # Go back to destination and run TREX build
+          cd ${{ matrix.DESTPATH }}
+          export TREX_DOCKER_TAG=sha256:12df563679a5e952b50a4d2a4d34dc598c05787193164eee84303909c059a0a8
+          echo "Using TREX_DOCKER_TAG=$TREX_DOCKER_TAG"
+          
+          # Use TREX from its installed location
+          export PATH="/usr/src/data/plugins/node_modules/@data2evidence/node_modules/.bin:$PATH"
           export DENO_DIR="$HOME/.cache/deno"
           node ${{ github.workspace }}/install-deno-deps.js .
-          cat package.json
           npm run trex_build
       - name: Use Node.js - OSS Develop
         uses: actions/setup-node@v4
