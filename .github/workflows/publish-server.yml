@@ -117,42 +117,65 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: | 
+          # Backup package.json
           cp package.json package.org.json
 
+          # ---------------------------
           # Create destination directory
+          # ---------------------------
           sudo mkdir -p ${{ matrix.DESTPATH }}
           sudo chown runner:docker ${{ matrix.DESTPATH }}
 
-          # Copy files to new destination
-          cp -a . ${{ matrix.DESTPATH }}
+          # ---------------------------
+          # Copy project safely
+          # ---------------------------
+          # Avoid copying node_modules, git, and deno.lock (they poison builds)
+          rsync -a \
+            --exclude .git \
+            --exclude deno.lock \
+            . ${{ matrix.DESTPATH }}
+
           cd ${{ matrix.DESTPATH }}
-          
-          # Remove the deno.lock file to let the container's Deno version recreate it
+
+          # ---------------------------
+          # Ensure clean Deno state
+          # ---------------------------
           rm -f deno.lock
-        
-          # Configure npm registry
-          echo "@data2evidence:registry=https://npm.pkg.github.com" >> ./.npmrc
-          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> ./.npmrc
-          
-          # Install TREX in the ORIGINAL node_modules location
-          sudo mkdir -p /usr/src/data/plugins/node_modules/@data2evidence
-          sudo chown runner:docker /usr/src/data/plugins/node_modules/@data2evidence
-          cd /usr/src/data/plugins/node_modules/@data2evidence
-          npm init -y > /dev/null 2>&1
-          echo "@data2evidence:registry=https://npm.pkg.github.com" >> ./.npmrc
-          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> ./.npmrc
-          npm i @data2evidence/trex
-          
-          # Go back to destination and run TREX build
-          cd ${{ matrix.DESTPATH }}
+
+          # ---------------------------
+          # Configure GitHub Packages for BOTH npm and Deno
+          # This file MUST be in the project root
+          # ---------------------------
           export TREX_DOCKER_TAG=sha256:12df563679a5e952b50a4d2a4d34dc598c05787193164eee84303909c059a0a8
           echo "Using TREX_DOCKER_TAG=$TREX_DOCKER_TAG"
-          
-          # Use TREX from its installed location
-          export PATH="/usr/src/data/plugins/node_modules/@data2evidence/node_modules/.bin:$PATH"
+          cat > .npmrc <<EOF
+          @data2evidence:registry=https://npm.pkg.github.com
+          @medplum:registry=https://registry.npmjs.org
+          //npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}
+          EOF
+
+          # ---------------------------
+          # Install TREX in THIS project
+          # ---------------------------
+          npm install @data2evidence/trex
+
+          # Make sure we run the local trex binary
+          export PATH="$(pwd)/node_modules/.bin:$PATH"
+
+          # Make Deno cache persistent (prevents redownloads)
           export DENO_DIR="$HOME/.cache/deno"
+
+          # ---------------------------
+          # Pre-install all Deno npm deps
+          # This step populates DENO_DIR using the .npmrc above
+          # ---------------------------
           node ${{ github.workspace }}/install-deno-deps.js .
+
+          # ---------------------------
+          # Run TREX build
+          # ---------------------------
           npm run trex_build
+
       - name: Use Node.js - OSS Develop
         uses: actions/setup-node@v4
         if: env.NPM_ARTIFACT_TYPE == 'OSS-develop'
