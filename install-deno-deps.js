@@ -145,7 +145,7 @@ function main() {
   const rootDenoJson = entries.find(entry => !entry.isDirectory() && entry.name === 'deno.json');
   if (rootDenoJson) {
     console.log(`📄 Found deno.json file in root directory: ${rootDenoJson.name}`);
-    const folderPath = path.join(FUNCTIONS_DIR, folderName);
+    const folderPath = process.cwd();
     installDependencies(folderPath, errorSummary);
   } else {
       const folders = entries
