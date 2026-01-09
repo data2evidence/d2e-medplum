@@ -139,7 +139,7 @@ function main() {
 
   // Get all subdirectories in functions
   const entries = fs.readdirSync(FUNCTIONS_DIR, { withFileTypes: true });
-  console.log('📁 Directory entries:', entries.map(entry => `${entry.name} (${entry.isDirectory() ? 'dir' : 'file'})`));
+  console.log('Directory entries:', entries.map(entry => `${entry.name}`));
   const folders = entries
     .filter(entry => entry.isDirectory())
     .map(entry => entry.name)
