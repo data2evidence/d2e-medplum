@@ -112,7 +112,6 @@ function installDependencies(folderPath, errorSummary) {
 
 function main() {
   console.log('\n🚀 Deno Dependency Installer\n');
-  console.log(FUNCTIONS_DIR)
   // Validate that functions directory argument is provided
   if (!FUNCTIONS_DIR) {
     console.error('❌ Functions directory argument is required.');
@@ -140,6 +139,7 @@ function main() {
 
   // Get all subdirectories in functions
   const entries = fs.readdirSync(FUNCTIONS_DIR, { withFileTypes: true });
+  console.log('📁 Directory entries:', entries.map(entry => `${entry.name} (${entry.isDirectory() ? 'dir' : 'file'})`));
   const folders = entries
     .filter(entry => entry.isDirectory())
     .map(entry => entry.name)
