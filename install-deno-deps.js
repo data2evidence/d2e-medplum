@@ -140,12 +140,13 @@ function main() {
   // Get all subdirectories in functions
   const entries = fs.readdirSync(FUNCTIONS_DIR, { withFileTypes: true });
   console.log('Directory entries:', entries.map(entry => `${entry.name}`));
-
+  const foldersWithDenoJson = [];
   // Check if there's a deno.json file in the root directory
   const rootDenoJson = entries.find(entry => !entry.isDirectory() && entry.name === 'deno.json');
   if (rootDenoJson) {
     console.log(`📄 Found deno.json file in root directory: ${rootDenoJson.name}`);
     const folderPath = process.cwd();
+    foldersWithDenoJson.push('.');
     installDependencies(folderPath, errorSummary);
   } else {
       const folders = entries
@@ -154,7 +155,7 @@ function main() {
         .filter(name => !name.startsWith('_')); // Skip _shared and similar folders
 
       // Filter folders that have deno.json files
-      const foldersWithDenoJson = folders.filter(folderName => {
+      foldersWithDenoJson = folders.filter(folderName => {
         const folderPath = path.join(FUNCTIONS_DIR, folderName);
         const denoJsonPath = path.join(folderPath, 'deno.json');
         return fs.existsSync(denoJsonPath);
