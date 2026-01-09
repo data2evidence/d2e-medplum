@@ -131,7 +131,7 @@ jobs:
           # echo "Using TREX_DOCKER_TAG=$TREX_DOCKER_TAG"
           # echo "@data2evidence:registry=https://npm.pkg.github.com" >> ./.npmrc
           # echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> ./.npmrc
-          # npm i @data2evidence/trex
+          npm i @data2evidence/trex
           
           export DENO_DIR="$HOME/.cache/deno"
           node ${{ github.workspace }}/install-deno-deps.js ../
