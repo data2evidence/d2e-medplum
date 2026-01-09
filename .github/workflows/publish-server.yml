@@ -135,7 +135,7 @@ jobs:
           echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> ./.npmrc
           
           # Install TREX CLI
-          npm i @trex/cli
+          npm i @data2evidence/trex
           
           export DENO_DIR="$HOME/.cache/deno"
           node ${{ github.workspace }}/install-deno-deps.js .
