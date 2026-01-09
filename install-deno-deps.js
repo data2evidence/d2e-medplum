@@ -111,6 +111,8 @@ function installDependencies(folderPath, errorSummary) {
 }
 
 function main() {
+  console.log('\n🚀 Deno Dependency Installer\n');
+  console.log(FUNCTIONS_DIR)
   // Validate that functions directory argument is provided
   if (!FUNCTIONS_DIR) {
     console.error('❌ Functions directory argument is required.');
