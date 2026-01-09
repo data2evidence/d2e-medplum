@@ -134,7 +134,7 @@ jobs:
           # npm i @data2evidence/trex
           
           export DENO_DIR="$HOME/.cache/deno"
-          node ${{ github.workspace }}/install-deno-deps.js .
+          node ${{ github.workspace }}/install-deno-deps.js ../
           npm run trex_build
       - name: Use Node.js - OSS Develop
         uses: actions/setup-node@v4
