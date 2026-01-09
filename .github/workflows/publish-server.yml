@@ -122,7 +122,7 @@ jobs:
           sudo chown runner:docker ${{ matrix.DESTPATH }}
           cp -a . ${{ matrix.DESTPATH }}
           cd ${{ matrix.DESTPATH }}
-
+          
           # Remove the deno.lock file to let the container's Deno version recreate it
           rm -f deno.lock
          
@@ -134,7 +134,7 @@ jobs:
           # npm i @data2evidence/trex
           
           export DENO_DIR="$HOME/.cache/deno"
-          node ./install-deno-deps.js ${{ matrix.PKGPATH }}
+          node ${{ github.workspace }}/install-deno-deps.js ${{ matrix.PKGPATH }}
           npm run trex_build
       - name: Use Node.js - OSS Develop
         uses: actions/setup-node@v4
