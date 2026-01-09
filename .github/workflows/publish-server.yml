@@ -135,7 +135,8 @@ jobs:
           echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> ./.npmrc
           
           # Install TREX in the ORIGINAL node_modules location
-          mkdir -p /usr/src/data/plugins/node_modules/@data2evidence
+          sudo mkdir -p /usr/src/data/plugins/node_modules/@data2evidence
+          sudo chown runner:docker /usr/src/data/plugins/node_modules/@data2evidence
           cd /usr/src/data/plugins/node_modules/@data2evidence
           npm init -y > /dev/null 2>&1
           echo "@data2evidence:registry=https://npm.pkg.github.com" >> ./.npmrc
