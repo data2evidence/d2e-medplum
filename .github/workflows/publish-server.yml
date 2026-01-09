@@ -127,9 +127,8 @@ jobs:
           sudo chown runner:docker ${{ matrix.DESTPATH }}
 
           # ---------------------------
-          # Copy project safely
+          # Copy project (node_modules INCLUDED on purpose)
           # ---------------------------
-          # Avoid copying node_modules, git, and deno.lock (they poison builds)
           rsync -a \
             --exclude .git \
             --exclude deno.lock \
@@ -143,32 +142,41 @@ jobs:
           rm -f deno.lock
 
           # ---------------------------
-          # Configure GitHub Packages for BOTH npm and Deno
-          # This file MUST be in the project root
+          # TREX docker tag
           # ---------------------------
           export TREX_DOCKER_TAG=sha256:12df563679a5e952b50a4d2a4d34dc598c05787193164eee84303909c059a0a8
           echo "Using TREX_DOCKER_TAG=$TREX_DOCKER_TAG"
-          cat > .npmrc <<EOF
+
+          # ---------------------------
+          # Create Deno-compatible .npmrc
+          # ---------------------------
+          cat > /tmp/d2e-npmrc <<EOF
           @data2evidence:registry=https://npm.pkg.github.com
           @medplum:registry=https://registry.npmjs.org
           registry=https://registry.npmjs.org
           //npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}
           EOF
 
+          # Root project
+          cp /tmp/d2e-npmrc .npmrc
+
+          # Plugin source (this is what TREX mirrors)
+          mkdir -p plugins/fhir/d2e-fhir-server
+          cp /tmp/d2e-npmrc plugins/fhir/d2e-fhir-server/.npmrc
+
           # ---------------------------
-          # Install TREX in THIS project
+          # Install / update TREX
           # ---------------------------
           npm install @data2evidence/trex
 
-          # Make sure we run the local trex binary
+          # Ensure we run the local trex binary
           export PATH="$(pwd)/node_modules/.bin:$PATH"
 
-          # Make Deno cache persistent (prevents redownloads)
+          # Deno cache
           export DENO_DIR="$HOME/.cache/deno"
 
           # ---------------------------
           # Pre-install all Deno npm deps
-          # This step populates DENO_DIR using the .npmrc above
           # ---------------------------
           node ${{ github.workspace }}/install-deno-deps.js .
 
