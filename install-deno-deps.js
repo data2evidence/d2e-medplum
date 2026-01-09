@@ -140,40 +140,48 @@ function main() {
   // Get all subdirectories in functions
   const entries = fs.readdirSync(FUNCTIONS_DIR, { withFileTypes: true });
   console.log('Directory entries:', entries.map(entry => `${entry.name}`));
-  const folders = entries
-    .filter(entry => entry.isDirectory())
-    .map(entry => entry.name)
-    .filter(name => !name.startsWith('_')); // Skip _shared and similar folders
 
-  // Filter folders that have deno.json files
-  const foldersWithDenoJson = folders.filter(folderName => {
-    const folderPath = path.join(FUNCTIONS_DIR, folderName);
-    const denoJsonPath = path.join(folderPath, 'deno.json');
-    return fs.existsSync(denoJsonPath);
-  });
-
-  console.log(`Found ${foldersWithDenoJson.length} folders with deno.json files:\n`);
-  console.log(`${foldersWithDenoJson.join(', ')}\n`);
-
-  if (foldersWithDenoJson.length === 0) {
-    console.log(`🤷 No folders with deno.json files found in ${FUNCTIONS_DIR}.`);
-    console.log(`💡 Run ./transform-imports.js ${FUNCTIONS_DIR} first to generate deno.json files.`);
-    process.exit(0);
-  }
-
-  // Install dependencies for each folder
-  foldersWithDenoJson.forEach(folderName => {
+  // Check if there's a deno.json file in the root directory
+  const rootDenoJson = entries.find(entry => !entry.isDirectory() && entry.name === 'deno.json');
+  if (rootDenoJson) {
+    console.log(`📄 Found deno.json file in root directory: ${rootDenoJson.name}`);
     const folderPath = path.join(FUNCTIONS_DIR, folderName);
     installDependencies(folderPath, errorSummary);
-  });
+  } else {
+      const folders = entries
+        .filter(entry => entry.isDirectory())
+        .map(entry => entry.name)
+        .filter(name => !name.startsWith('_')); // Skip _shared and similar folders
 
+      // Filter folders that have deno.json files
+      const foldersWithDenoJson = folders.filter(folderName => {
+        const folderPath = path.join(FUNCTIONS_DIR, folderName);
+        const denoJsonPath = path.join(folderPath, 'deno.json');
+        return fs.existsSync(denoJsonPath);
+      });
+
+    console.log(`Found ${foldersWithDenoJson.length} folders with deno.json files:\n`);
+    console.log(`${foldersWithDenoJson.join(', ')}\n`);
+
+    if (foldersWithDenoJson.length === 0) {
+      console.log(`🤷 No folders with deno.json files found in ${FUNCTIONS_DIR}.`);
+      console.log(`💡 Run ./transform-imports.js ${FUNCTIONS_DIR} first to generate deno.json files.`);
+      process.exit(0);
+    }
+
+    // Install dependencies for each folder
+    foldersWithDenoJson.forEach(folderName => {
+      const folderPath = path.join(FUNCTIONS_DIR, folderName);
+      installDependencies(folderPath, errorSummary);
+    });
+  }
   console.log('\n🎉 Dependency installation completed!');
 
   // Display detailed summary
   console.log('\n📊 DETAILED SUMMARY:');
   
   if (errorSummary.success.length > 0) {
-    console.log(`✅ Successfully installed: ${errorSummary.success.length} folders`);
+    console.log(`✅ Successfully installed: ${errorSummary.success.length} locations`);
     console.log(`   ${errorSummary.success.join(', ')}`);
   }
 
@@ -184,7 +192,7 @@ function main() {
   }
 
   if (errorSummary.installFailed.length > 0) {
-    console.log(`\n❌ Installation failed: ${errorSummary.installFailed.length} folders`);
+    console.log(`\n❌ Installation failed: ${errorSummary.installFailed.length} locations`);
     
     // Group by error type for better readability
     const errorGroups = {};
