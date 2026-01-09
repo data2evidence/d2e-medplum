@@ -60,7 +60,7 @@ jobs:
       matrix:
         include:
           - PKGPATH: ./packages/server/
-            DESTPATH: /usr/src/data/plugins/node_modules/@data2evidence/d2e-fhir-server
+            DESTPATH: /usr/src/data/plugins/@data2evidence/d2e-fhir-server
             NPM: npm
     steps:
       - uses: actions/checkout@v4
