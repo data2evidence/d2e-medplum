@@ -151,6 +151,7 @@ jobs:
           cat > .npmrc <<EOF
           @data2evidence:registry=https://npm.pkg.github.com
           @medplum:registry=https://registry.npmjs.org
+          registry=https://registry.npmjs.org
           //npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}
           EOF
 
