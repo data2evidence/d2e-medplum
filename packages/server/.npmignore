@@ -1,0 +1,10 @@
+.*
+*.test.ts
+*.spec.ts
+tsconfig*.json
+jest.config.json
+jest.sequencer.js
+collector-config.yaml
+test.config.json
+turbo.json
+deno.bk.lock
