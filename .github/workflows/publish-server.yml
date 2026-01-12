@@ -142,11 +142,12 @@ jobs:
           # ---------------------------
           # Configure npm registry FIRST
           # ---------------------------
-          export TREX_DOCKER_TAG=sha256:468f1fa411b288f8ebac842dc0982bb7b8cb2d5eeb8dc25a494b734fcacfac42
+          export TREX_DOCKER_TAG=sha256:12df563679a5e952b50a4d2a4d34dc598c05787193164eee84303909c059a0a8
           #$(grep -m1 '^FROM ' $GITHUB_WORKSPACE/services/trex/Dockerfile | sed -E 's/.*@(sha256:[a-f0-9]+).*/\1/')
-          echo "Using TREX_DOCKER_TAG=$TREX_DOCKER_TAG"
-          echo "@data2evidence:registry=https://npm.pkg.github.com" >> ./.npmrc
-          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> ./.npmrc
+          cat > .npmrc <<EOF
+          @data2evidence:registry=https://pkgs.dev.azure.com/data2evidence/d2e/_packaging/d2e/npm/registry/
+          //pkgs.dev.azure.com/data2evidence/d2e/_packaging/d2e/npm/registry/:_authToken=${NODE_AUTH_TOKEN}
+          EOF
 
           # ---------------------------
           # Install Deno dependencies with proper cache
@@ -155,27 +156,22 @@ jobs:
           mkdir -p "$DENO_DIR"
           # deno install --allow-scripts 2>/dev/null || echo "⚠️  Deno install had warnings, continuing..."
 
-          npm i @data2evidence/trex
-          
+          npm i @trex/cli
+          # Add local node_modules/.bin to PATH
+          export PATH="$(pwd)/node_modules/.bin:$PATH"
+
+          # Verify installation
+          trex --version || echo "TREX not found"
+
           # ---------------------------
-          # Print TREX installation details
+          # Pre-install Deno npm dependencies
           # ---------------------------
-          echo "Files in node_modules/@data2evidence/trex:"
-          ls -la node_modules/@data2evidence/trex || echo "⚠️  TREX not found in node_modules"
-          
-          echo "TREX scripts directory:"
-          ls -la node_modules/@data2evidence/trex/scripts || echo "⚠️  scripts directory not found"
-          
+          # node ${{ github.workspace }}/install-deno-deps.js .
+
           # ---------------------------
+          # Run TREX build
           # ---------------------------
-          # Configure Node.js to handle TREX build (avoid Deno type stripping)
-          # ---------------------------
-          npm install -g tsx
-          
-          # ---------------------------
-          # Run TREX build directly with tsx in ESM mode (bypass npm script)
-          # ---------------------------
-          tsx --esm node_modules/@data2evidence/trex/scripts/build.ts node_modules/@data2evidence/trex
+          npm run trex_build
 
       - name: Use Node.js - OSS Develop
         uses: actions/setup-node@v4
