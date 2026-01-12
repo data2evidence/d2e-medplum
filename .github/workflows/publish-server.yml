@@ -182,9 +182,11 @@ jobs:
           tsx "$@"
           EOF
           chmod +x /usr/local/bin/tbuild
+          
           # ---------------------------
-          # Run TREX build
+          # Run TREX build with wrapper tbuild in PATH
           # ---------------------------
+          export PATH="/usr/local/bin:$PATH"
           npm run trex_build
 
       - name: Use Node.js - OSS Develop
