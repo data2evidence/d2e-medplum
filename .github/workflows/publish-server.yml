@@ -162,6 +162,15 @@ jobs:
           npm install @data2evidence/trex
           
           # ---------------------------
+          # Print TREX installation details
+          # ---------------------------
+          echo "Files in node_modules/@data2evidence/trex:"
+          ls -la node_modules/@data2evidence/trex || echo "⚠️  TREX not found in node_modules"
+          
+          echo "TREX scripts directory:"
+          ls -la node_modules/@data2evidence/trex/scripts || echo "⚠️  scripts directory not found"
+          
+          # ---------------------------
           # Run TREX build
           # ---------------------------
           npm run trex_build
