@@ -147,44 +147,36 @@ jobs:
           export TREX_DOCKER_TAG=sha256:12df563679a5e952b50a4d2a4d34dc598c05787193164eee84303909c059a0a8
           echo "Using TREX_DOCKER_TAG=$TREX_DOCKER_TAG"
 
-          # Directory that TREX mirrors and where Deno runs
-          DENO_PLUGIN_DIR="plugins/fhir/d2e-fhir-server/src"
+          # Install TREX first (this creates /usr/src/data/plugins/...)
+          npm install @data2evidence/trex
 
-          # Ensure it exists
-          test -f "$DENO_PLUGIN_DIR/deno.json"
+          export PATH="$(pwd)/node_modules/.bin:$PATH"
+          export DENO_DIR="$HOME/.cache/deno"
 
-          # Write EXACT npmrc that Deno will read
-          cat > "$DENO_PLUGIN_DIR/.npmrc" <<EOF
+          # ---- RUN TREX ONCE to create the plugin mirror ----
+          trex prepare || true
+
+          # Where TREX mirrors the Deno project
+          DENO_RUNTIME_DIR="/usr/src/data/plugins/@data2evidence/d2e-fhir-server"
+
+          # Write the npmrc that Deno will ACTUALLY read
+          cat > "$DENO_RUNTIME_DIR/.npmrc" <<EOF
           @data2evidence:registry=https://npm.pkg.github.com
           @medplum:registry=https://registry.npmjs.org
           registry=https://registry.npmjs.org
           //npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}
           EOF
 
-          # Use the SAME file for npm too
-          cp "$DENO_PLUGIN_DIR/.npmrc" .npmrc
+          # Prove it
+          echo "====== .npmrc used by Deno ======"
+          cat "$DENO_RUNTIME_DIR/.npmrc"
+          echo "================================"
 
-          # ---------------------------
-          # Install / update TREX
-          # ---------------------------
-          npm install @data2evidence/trex
-
-          # Ensure we run the local trex binary
-          export PATH="$(pwd)/node_modules/.bin:$PATH"
-
-          # Deno cache
-          export DENO_DIR="$HOME/.cache/deno"
-
-          # ---------------------------
-          # Pre-install all Deno npm deps
-          # ---------------------------
+          # Now install Deno deps
           node ${{ github.workspace }}/install-deno-deps.js .
 
-          # ---------------------------
-          # Run TREX build
-          # ---------------------------
+          # Now do the real build
           npm run trex_build
-
       - name: Use Node.js - OSS Develop
         uses: actions/setup-node@v4
         if: env.NPM_ARTIFACT_TYPE == 'OSS-develop'
