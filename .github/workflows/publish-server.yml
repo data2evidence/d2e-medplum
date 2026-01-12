@@ -139,13 +139,10 @@ jobs:
 
           cd ${{ matrix.DESTPATH }}
 
-          echo "Files in DESTPATH (${{ matrix.DESTPATH }}):"
-          ls -la
-
           # ---------------------------
           # Configure npm registry FIRST
           # ---------------------------
-          echo "@data2evidence:registry=https://npm.pkg.github.com" > ./.npmrc
+          echo "@data2evidence:registry=https://npm.pkg.github.com" >> ./.npmrc
           echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> ./.npmrc
 
           # ---------------------------
@@ -165,6 +162,12 @@ jobs:
           
           echo "TREX scripts directory:"
           ls -la node_modules/@data2evidence/trex/scripts || echo "⚠️  scripts directory not found"
+          
+          # ---------------------------
+          # Set TREX Docker tag
+          # ---------------------------
+          export TREX_DOCKER_TAG=sha256:12df563679a5e952b50a4d2a4d34dc598c05787193164eee84303909c059a0a8
+          echo "Using TREX_DOCKER_TAG=$TREX_DOCKER_TAG"
           
           # ---------------------------
           # Configure Node.js to handle TREX build (avoid Deno type stripping)
