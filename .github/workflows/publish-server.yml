@@ -173,9 +173,9 @@ jobs:
           npm install -g tsx
           
           # ---------------------------
-          # Run TREX build directly with tsx (bypass npm script)
+          # Run TREX build directly with tsx in ESM mode (bypass npm script)
           # ---------------------------
-          tsx node_modules/@data2evidence/trex/scripts/build.ts node_modules/@data2evidence/trex
+          tsx --esm node_modules/@data2evidence/trex/scripts/build.ts node_modules/@data2evidence/trex
 
       - name: Use Node.js - OSS Develop
         uses: actions/setup-node@v4
