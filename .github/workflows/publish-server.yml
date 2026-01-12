@@ -152,23 +152,14 @@ jobs:
           EOF
 
           # ---------------------------
-          # Install Deno dependencies with proper cache
+          # Install TREX build tool
           # ---------------------------
-          export DENO_DIR="${{ matrix.DESTPATH }}/.deno"
-          mkdir -p "$DENO_DIR"
-          # deno install --allow-scripts 2>/dev/null || echo "⚠️  Deno install had warnings, continuing..."
-
-          npm i @trex/cli
+          npm i @data2evidence/trex
           # Add local node_modules/.bin to PATH
           export PATH="$(pwd)/node_modules/.bin:$PATH"
 
           # Verify installation
           trex --version || echo "TREX not found"
-
-          # ---------------------------
-          # Pre-install Deno npm dependencies
-          # ---------------------------
-          # node ${{ github.workspace }}/install-deno-deps.js .
 
           # ---------------------------
           # Run TREX build
