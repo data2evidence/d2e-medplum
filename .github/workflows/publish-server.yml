@@ -120,7 +120,9 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Backup package.json
+          set -e
+
+          # Backup
           cp package.json package.org.json
 
           # ---------------------------
@@ -130,38 +132,54 @@ jobs:
           sudo chown runner:docker ${{ matrix.DESTPATH }}
 
           # ---------------------------
-          # Copy project with node_modules
+          # Copy project INCLUDING node_modules
           # ---------------------------
-          rsync -a \
-            --exclude .git \
-            --exclude deno.lock \
-            . ${{ matrix.DESTPATH }}
-
+          rsync -a --exclude .git --exclude deno.lock . ${{ matrix.DESTPATH }}
           cd ${{ matrix.DESTPATH }}
+          rm -f deno.lock
 
           # ---------------------------
-          # Configure npm registry FIRST
+          # Write npmrc WHERE DENO CAN SEE IT
           # ---------------------------
-          export TREX_DOCKER_TAG=sha256:12df563679a5e952b50a4d2a4d34dc598c05787193164eee84303909c059a0a8
-          echo "@data2evidence:registry=https://npm.pkg.github.com" >> ~/.npmrc
-          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> ~/.npmrc
+          cat > .npmrc <<EOF
+          @data2evidence:registry=https://npm.pkg.github.com
+          @trex:registry=https://pkgs.dev.azure.com/data2evidence/d2e/_packaging/d2e/npm/registry/
+          //npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}
+          //pkgs.dev.azure.com/data2evidence/d2e/_packaging/d2e/npm/registry/:_authToken=${NODE_AUTH_TOKEN}
+          registry=https://registry.npmjs.org
+          EOF
 
           # ---------------------------
-          # Install Deno globally in this shell
+          # Install Deno
           # ---------------------------
           npm install -g deno@2.5.6
+          export DENO_DIR="$HOME/.cache/deno"
+          export DENO_NO_PROMPT=1
 
           # ---------------------------
-          # Install TREX build tool
+          # Install TREX CLI (correct one)
           # ---------------------------
           npm install @trex/cli
           export PATH="$(pwd)/node_modules/.bin:$PATH"
-          
+
           # ---------------------------
-          # Run TREX build (disable type stripping in node_modules)
+          # Populate Deno cache (uses .npmrc above)
           # ---------------------------
-          export DENO_NO_PROMPT=1
+          node ${{ github.workspace }}/install-deno-deps.js .
+
+          deno install --allow-scripts
+
+          # ---------------------------
+          # Pin TREX docker image
+          # ---------------------------
+          export TREX_DOCKER_TAG=sha256:12df563679a5e952b50a4d2a4d34dc598c05787193164eee84303909c059a0a8
+          echo "Using TREX_DOCKER_TAG=$TREX_DOCKER_TAG"
+
+          # ---------------------------
+          # Build
+          # ---------------------------
           npm run trex_build
+
 
       - name: Use Node.js - OSS Develop
         uses: actions/setup-node@v4
