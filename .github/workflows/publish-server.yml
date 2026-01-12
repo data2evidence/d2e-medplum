@@ -150,7 +150,7 @@ jobs:
           # ---------------------------
           # Install TREX build tool
           # ---------------------------
-          npm i @data2evidence/trex tsx
+          npm i @data2evidence/trex
           # Add local node_modules/.bin to PATH
           export PATH="$(pwd)/node_modules/.bin:$PATH"
 
