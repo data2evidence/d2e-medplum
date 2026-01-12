@@ -12,7 +12,6 @@
     "url": "git+https://github.com/medplum/medplum.git",
     "directory": "packages/server"
   },
-  "bundledDependencies": true,
   "license": "Apache-2.0",
   "author": "Medplum <hello@medplum.com>",
   "scripts": {
