@@ -117,7 +117,9 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: | 
+          # ---------------------------
           # Backup package.json
+          # ---------------------------
           cp package.json package.org.json
 
           # ---------------------------
@@ -127,7 +129,7 @@ jobs:
           sudo chown runner:docker ${{ matrix.DESTPATH }}
 
           # ---------------------------
-          # Copy project (node_modules INCLUDED on purpose)
+          # Copy project (node_modules INCLUDED)
           # ---------------------------
           rsync -a \
             --exclude .git \
@@ -137,29 +139,36 @@ jobs:
           cd ${{ matrix.DESTPATH }}
 
           # ---------------------------
-          # Ensure clean Deno state
+          # Clean Deno state
           # ---------------------------
           rm -f deno.lock
 
           # ---------------------------
-          # TREX docker tag
+          # Install TREX and make it available
+          # ---------------------------
+          npm install @data2evidence/trex
+          export PATH="$(pwd)/node_modules/.bin:$PATH"
+
+          echo "Using TREX from: $(which trex)"
+          trex --version || echo "TREX not found"
+
+          # ---------------------------
+          # Set TREX docker tag
           # ---------------------------
           export TREX_DOCKER_TAG=sha256:12df563679a5e952b50a4d2a4d34dc598c05787193164eee84303909c059a0a8
           echo "Using TREX_DOCKER_TAG=$TREX_DOCKER_TAG"
 
-          # Install TREX first (this creates /usr/src/data/plugins/...)
-          npm install @data2evidence/trex
-
-          export PATH="$(pwd)/node_modules/.bin:$PATH"
-          export DENO_DIR="$HOME/.cache/deno"
-
-          # ---- RUN TREX ONCE to create the plugin mirror ----
+          # ---------------------------
+          # Prepare TREX (creates runtime mirror)
+          # ---------------------------
           trex prepare || true
 
-          # Where TREX mirrors the Deno project
+          # ---------------------------
+          # Write .npmrc in the Deno runtime folder
+          # This is the folder Deno will actually read
+          # ---------------------------
           DENO_RUNTIME_DIR="/usr/src/data/plugins/@data2evidence/d2e-fhir-server"
 
-          # Write the npmrc that Deno will ACTUALLY read
           cat > "$DENO_RUNTIME_DIR/.npmrc" <<EOF
           @data2evidence:registry=https://npm.pkg.github.com
           @medplum:registry=https://registry.npmjs.org
@@ -167,21 +176,27 @@ jobs:
           //npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}
           EOF
 
-          # Prove it
-          echo "====== .npmrc used by Deno ======"
-          cat "$DENO_RUNTIME_DIR/.npmrc"
-          echo "================================"
+          # ---------------------------
+          # Optional sanity check
+          # ---------------------------
+          echo "====== .npmrc that Deno will read ======"
+          ls -l $DENO_RUNTIME_DIR
+          cat $DENO_RUNTIME_DIR/.npmrc
+          echo "========================================"
 
-          # ---- Show what .npmrc Deno will actually read ----
-          echo "====== npmrc that Deno is reading ======"
-          ls -l /usr/src/data/plugins/@data2evidence/d2e-fhir-server
-          cat /usr/src/data/plugins/@data2evidence/d2e-fhir-server/.npmrc || echo "NO .npmrc FOUND"
-          echo "======================================"
+          # ---------------------------
+          # Ensure persistent Deno cache
+          # ---------------------------
+          export DENO_DIR="$HOME/.cache/deno"
 
-          # ---- Now install Deno deps ----
+          # ---------------------------
+          # Pre-install Deno npm dependencies
+          # ---------------------------
           node ${{ github.workspace }}/install-deno-deps.js .
 
-          # Now do the real build
+          # ---------------------------
+          # Run TREX build
+          # ---------------------------
           npm run trex_build
       - name: Use Node.js - OSS Develop
         uses: actions/setup-node@v4
