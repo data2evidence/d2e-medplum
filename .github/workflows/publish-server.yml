@@ -158,8 +158,8 @@ jobs:
           # ---------------------------
           # Install Deno dependencies with proper cache
           # ---------------------------
-          export DENO_DIR="${DESTPATH}/.deno"
-          mkdir -p $DENO_DIR
+          export DENO_DIR="${{ matrix.DESTPATH }}/.deno"
+          mkdir -p "$DENO_DIR"
           deno install --allow-scripts
 
           # ---------------------------
