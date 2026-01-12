@@ -69,15 +69,18 @@ jobs:
           repository: ${{ env.GIT_REPO_FULL_NAME }}
           submodules: recursive
           fetch-depth: 0
+
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           registry-url: "https://npm.pkg.github.com"
           scope: "@data2evidence"
+
       - name: Setup NPM
         if: ${{ matrix.NPM }}
         run: npm install -g ${{ matrix.NPM }}
+
       - name: Install dependencies
         if: ${{ matrix.DESTPATH }}
         run: |
@@ -89,6 +92,7 @@ jobs:
           deno install --allow-scripts
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Update version
         run: |
           cd ${{ matrix.PKGPATH }}
@@ -98,6 +102,7 @@ jobs:
           else
             jq --arg v "-$(date +%s)-$GITHUB_SHA" '.version+=$v' package.json > tmppkg; mv tmppkg package.json
           fi
+
       - name: Build
         run: |
           echo "@data2evidence:registry=https://npm.pkg.github.com" >> ~/.npmrc
@@ -107,10 +112,12 @@ jobs:
         env:
           CI: ${{ matrix.NPM != 'yarn' }}
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Patch Package
         if: ${{ matrix.NPM }}
         working-directory: ${{ matrix.PKGPATH }}
         run: jq '.private=false' package.json > tmppkg; mv tmppkg package.json
+
       - name: DEST
         working-directory: ${{ matrix.PKGPATH }}
         if:  ${{ matrix.DESTPATH }}
@@ -127,60 +134,39 @@ jobs:
           sudo chown runner:docker ${{ matrix.DESTPATH }}
 
           # ---------------------------
-          # Copy project WITHOUT node_modules
+          # Copy project with node_modules
           # ---------------------------
           rsync -a \
-            --exclude node_modules \
             --exclude .git \
             --exclude deno.lock \
             . ${{ matrix.DESTPATH }}
 
           cd ${{ matrix.DESTPATH }}
 
-          # ---------------------------
-          # Clean Deno state
-          # ---------------------------
-          rm -f deno.lock
-          export DENO_DIR="$HOME/.cache/deno"
+          echo "Files in DESTPATH (${{ matrix.DESTPATH }}):"
+          ls -la
 
           # ---------------------------
-          # Ensure .npmrc is correct for this plugin
+          # Reinstall dependencies in DEST with proper registry
           # ---------------------------
-          echo "@data2evidence:registry=https://npm.pkg.github.com" > .npmrc
-          echo "@medplum:registry=https://registry.npmjs.org" >> .npmrc
-          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> .npmrc
-
-          # Also create .npmrc inside the plugin folder
-          mkdir -p plugins/fhir/d2e-fhir-server
-          cat > plugins/fhir/d2e-fhir-server/.npmrc <<EOF
-          @data2evidence:registry=https://npm.pkg.github.com
-          @medplum:registry=https://registry.npmjs.org
-          registry=https://registry.npmjs.org
-          //npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}
-          EOF
-
-          # ---------------------------
-          # Install TREX and plugin dependencies locally
-          # ---------------------------
-          cd plugins/fhir/d2e-fhir-server
-          npm install
+          echo "@data2evidence:registry=https://npm.pkg.github.com" >> ./.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> ./.npmrc
+          
+          npm install --ignore-scripts
           npm install @data2evidence/trex
-          export PATH="$(pwd)/node_modules/.bin:$PATH"
-
-          echo "Using TREX from: $(which trex)"
-          trex --version || echo "TREX not found"
 
           # ---------------------------
-          # Pre-install Deno dependencies (TREX requirement)
+          # Install Deno dependencies with proper cache
           # ---------------------------
-          cd ${{ matrix.DESTPATH }}
-          node ${{ github.workspace }}/install-deno-deps.js .
+          export DENO_DIR="${DESTPATH}/.deno"
+          mkdir -p $DENO_DIR
+          deno install --allow-scripts
 
           # ---------------------------
-          # Run TREX build
+          # Run TREX build in current directory
           # ---------------------------
-          cd plugins/fhir/d2e-fhir-server
           npm run trex_build
+
       - name: Use Node.js - OSS Develop
         uses: actions/setup-node@v4
         if: env.NPM_ARTIFACT_TYPE == 'OSS-develop'
@@ -188,6 +174,7 @@ jobs:
           node-version: 20
           registry-url: "https://pkgs.dev.azure.com/data2evidence/d2e/_packaging/d2e/npm/registry/"
           scope: "@data2evidence"
+
       - name: Use Node.js - OSS Release
         uses: actions/setup-node@v4
         if: env.NPM_ARTIFACT_TYPE == 'OSS-release'
@@ -195,6 +182,7 @@ jobs:
           node-version: 20
           registry-url: "https://pkgs.dev.azure.com/data2evidence/d2e/_packaging/stable/npm/registry/"
           scope: "@data2evidence"
+
       - name: Use Node.js - Project
         uses: actions/setup-node@v4
         if: env.NPM_ARTIFACT_TYPE == 'Project'
@@ -202,6 +190,7 @@ jobs:
           node-version: 20
           registry-url: "https://pkgs.dev.azure.com/data2evidence/d2e/_packaging/ms/npm/registry/"
           scope: "@data2evidence"
+
       - name: Publish
         env:
           CI: ${{ matrix.NPM != 'yarn' }}
@@ -226,7 +215,7 @@ jobs:
           else
              ${{ matrix.NPM || 'npm' }} pack
           fi
-  
+
   success:
     needs: build
     runs-on: ubuntu-latest
