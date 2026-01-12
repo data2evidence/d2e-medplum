@@ -178,9 +178,9 @@ jobs:
           # Override tbuild to use tsx instead of deno
           mkdir -p /usr/local/bin
           cat > /usr/local/bin/tbuild << 'EOF'
-#!/bin/bash
-tsx "$@"
-EOF
+          #!/bin/bash
+          tsx "$@"
+          EOF
           chmod +x /usr/local/bin/tbuild
           # ---------------------------
           # Run TREX build
