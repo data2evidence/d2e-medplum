@@ -1,6 +1,6 @@
 // import { getReferenceString } from '@medplum/core';
 import { AsyncJob, Parameters } from '@medplum/fhirtypes';
-import { closeWorkers, initWorkers } from '.';
+import { closeWorkers, initWorkers } from './index';
 import { initAppServices, shutdownApp } from '../app';
 import { loadTestConfig } from '../config/loader';
 import { MedplumServerConfig } from '../config/types';
