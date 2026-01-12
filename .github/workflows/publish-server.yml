@@ -172,19 +172,10 @@ jobs:
           # ---------------------------
           npm install -g tsx
           
-          # Override tbuild to use tsx instead of deno
-          mkdir -p /usr/local/bin
-          cat > /usr/local/bin/tbuild << 'EOF'
-          #!/bin/bash
-          tsx "$@"
-          EOF
-          chmod +x /usr/local/bin/tbuild
-          
           # ---------------------------
-          # Run TREX build with wrapper tbuild in PATH
+          # Run TREX build directly with tsx (bypass npm script)
           # ---------------------------
-          export PATH="/usr/local/bin:$PATH"
-          npm run trex_build
+          tsx node_modules/@data2evidence/trex/scripts/build.ts node_modules/@data2evidence/trex
 
       - name: Use Node.js - OSS Develop
         uses: actions/setup-node@v4
