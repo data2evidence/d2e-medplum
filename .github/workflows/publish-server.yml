@@ -172,7 +172,13 @@ jobs:
           cat "$DENO_RUNTIME_DIR/.npmrc"
           echo "================================"
 
-          # Now install Deno deps
+          # ---- Show what .npmrc Deno will actually read ----
+          echo "====== npmrc that Deno is reading ======"
+          ls -l /usr/src/data/plugins/@data2evidence/d2e-fhir-server
+          cat /usr/src/data/plugins/@data2evidence/d2e-fhir-server/.npmrc || echo "NO .npmrc FOUND"
+          echo "======================================"
+
+          # ---- Now install Deno deps ----
           node ${{ github.workspace }}/install-deno-deps.js .
 
           # Now do the real build
