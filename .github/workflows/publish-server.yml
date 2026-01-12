@@ -167,22 +167,23 @@ jobs:
           ls -la node_modules/@data2evidence/trex/scripts || echo "⚠️  scripts directory not found"
           
           # ---------------------------
+          # ---------------------------
           # Configure Node.js to handle TREX build (avoid Deno type stripping)
           # ---------------------------
-          # npm install -g tsx
+          npm install -g tsx
           
-          # # Override tbuild to use tsx instead of deno
-          # mkdir -p /usr/local/bin
-          # cat > /usr/local/bin/tbuild << 'EOF'
-          # #!/bin/bash
-          # tsx "$@"
-          # EOF
-          # chmod +x /usr/local/bin/tbuild
+          # Override tbuild to use tsx instead of deno
+          mkdir -p /usr/local/bin
+          cat > /usr/local/bin/tbuild << 'EOF'
+          #!/bin/bash
+          tsx "$@"
+          EOF
+          chmod +x /usr/local/bin/tbuild
           
-          # # ---------------------------
-          # # Run TREX build with wrapper tbuild in PATH
-          # # ---------------------------
-          # export PATH="/usr/local/bin:$PATH"
+          # ---------------------------
+          # Run TREX build with wrapper tbuild in PATH
+          # ---------------------------
+          export PATH="/usr/local/bin:$PATH"
           npm run trex_build
 
       - name: Use Node.js - OSS Develop
