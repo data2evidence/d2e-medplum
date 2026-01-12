@@ -167,7 +167,7 @@ jobs:
           # ---------------------------
           node ${{ github.workspace }}/install-deno-deps.js .
 
-          deno cache --node-modules-dir --reload
+          deno cache --node-modules-dir --reload src/**/*.ts
           deno install --allow-scripts
 
           # ---------------------------
@@ -180,7 +180,6 @@ jobs:
           # Build
           # ---------------------------
           npm run trex_build
-
 
       - name: Use Node.js - OSS Develop
         uses: actions/setup-node@v4
