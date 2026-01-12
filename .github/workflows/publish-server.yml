@@ -101,7 +101,7 @@ jobs:
 
       - name: Build
         run: |
-          echo "@data2evidence:registry=https://npm.pkg.github.com" >> ~/.npmrc
+          echo "@trex:registry=https://npm.pkg.github.com" >> ~/.npmrc
           echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> ~/.npmrc
           cd ${{ matrix.PKGPATH }}
           ${{ matrix.NPM == 'yarn' && 'yarn install' ||'npm install --ignore-scripts' }}
