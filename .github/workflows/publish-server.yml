@@ -154,6 +154,8 @@ jobs:
           
           npm install --ignore-scripts
 
+          rm -rf node_modules/@data2evidence/trex
+
           # ---------------------------
           # Install Deno dependencies with proper cache
           # ---------------------------
