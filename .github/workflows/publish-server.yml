@@ -150,12 +150,9 @@ jobs:
           # ---------------------------
           # Install TREX build tool
           # ---------------------------
-          npm i @data2evidence/trex
+          npm i @data2evidence/trex tsx
           # Add local node_modules/.bin to PATH
           export PATH="$(pwd)/node_modules/.bin:$PATH"
-
-          # Verify installation
-          trex --version || echo "TREX not found"
 
           # ---------------------------
           # Run TREX build
