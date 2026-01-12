@@ -139,8 +139,7 @@ function main() {
 
   // Get all subdirectories in functions
   const entries = fs.readdirSync(FUNCTIONS_DIR, { withFileTypes: true });
-  console.log('Directory entries:', entries.map(entry => `${entry.name}`));
-  const foldersWithDenoJson = [];
+  let foldersWithDenoJson = [];
   // Check if there's a deno.json file in the root directory
   const rootDenoJson = entries.find(entry => !entry.isDirectory() && entry.name === 'deno.json');
   if (rootDenoJson) {
