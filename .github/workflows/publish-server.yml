@@ -118,7 +118,7 @@ jobs:
         working-directory: ${{ matrix.PKGPATH }}
         run: jq '.private=false' package.json > tmppkg; mv tmppkg package.json
 
-      - name: DEST
+            - name: DEST
         working-directory: ${{ matrix.PKGPATH }}
         if:  ${{ matrix.DESTPATH }}
         env:
@@ -153,7 +153,6 @@ jobs:
           echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> ./.npmrc
           
           npm install --ignore-scripts
-          npm install @data2evidence/trex
 
           # ---------------------------
           # Install Deno dependencies with proper cache
@@ -161,6 +160,11 @@ jobs:
           export DENO_DIR="${{ matrix.DESTPATH }}/.deno"
           mkdir -p "$DENO_DIR"
           deno install --allow-scripts
+
+          # ---------------------------
+          # Install TREX globally to avoid node_modules type stripping
+          # ---------------------------
+          npm install -g @data2evidence/trex
 
           # ---------------------------
           # Run TREX build in current directory
