@@ -1,10 +1,14 @@
-.*
-*.test.ts
-*.spec.ts
-tsconfig*.json
-jest.config.json
-jest.sequencer.js
-collector-config.yaml
-test.config.json
-turbo.json
-deno.bk.lock
+# Exclude everything first
+*
+
+# Then include what we want
+!src/**
+!node_modules/**
+!dist/**
+!static/**
+!package.json
+!deno.json
+!deno.lock
+!README.md
+!babel.config.json
+!medplum.config.json
