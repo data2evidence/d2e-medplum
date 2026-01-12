@@ -3,7 +3,7 @@
 
 # Then include what we want
 !src/**
-!.deno-packages/**
+!.deno-cache/**
 !dist/**
 !static/**
 !package.json
