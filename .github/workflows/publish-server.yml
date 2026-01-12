@@ -154,10 +154,9 @@ jobs:
           # ---------------------------
           # Install TREX build tool
           # ---------------------------
-          npm i @data2evidence/trex
-          # Add local node_modules/.bin to PATH
+          npm install @trex/cli
           export PATH="$(pwd)/node_modules/.bin:$PATH"
-
+          
           # ---------------------------
           # Run TREX build (disable type stripping in node_modules)
           # ---------------------------
