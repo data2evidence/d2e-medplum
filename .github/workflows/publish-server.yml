@@ -53,14 +53,14 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: (github.ref_name == 'main' || github.ref_name == 'csafreen/remove_workers_server' || contains('release', github.ref_name) || github.event_name == 'workflow_dispatch') || ( github.event_name == 'pull_request' && !github.event.pull_request.draft ) # Should run if branch is main/release/workflow_dispatch and doesnt have a PR
+    if: (github.ref_name == 'main' || contains('release', github.ref_name) || github.event_name == 'workflow_dispatch') || ( github.event_name == 'pull_request' && !github.event.pull_request.draft ) # Should run if branch is main/release/workflow_dispatch and doesnt have a PR
 
     strategy:
       fail-fast: false
       matrix:
         include:
           - PKGPATH: ./packages/server/
-            DESTPATH: /usr/src/data/plugins/@data2evidence/d2e-fhir-server
+            DESTPATH: /usr/src/data/plugins/node_modules/@data2evidence/d2e-fhir-server
             NPM: npm
     steps:
       - uses: actions/checkout@v4
@@ -81,7 +81,7 @@ jobs:
       - name: Install dependencies
         if: ${{ matrix.DESTPATH }}
         run: |
-          npm install -g deno@2.5.6
+          npm install -g deno@2.1.13
           node ./install-deno-deps.js ${{ matrix.PKGPATH }}
           cd ${{ matrix.PKGPATH }}
           echo "@data2evidence:registry=https://npm.pkg.github.com" >> ./.npmrc
@@ -117,86 +117,17 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: | 
-          # ---------------------------
-          # Backup package.json
-          # ---------------------------
           cp package.json package.org.json
-
-          # ---------------------------
-          # Create destination directory
-          # ---------------------------
           sudo mkdir -p ${{ matrix.DESTPATH }}
           sudo chown runner:docker ${{ matrix.DESTPATH }}
-
-          # ---------------------------
-          # Copy project (node_modules INCLUDED)
-          # ---------------------------
-          rsync -a \
-            --exclude .git \
-            --exclude deno.lock \
-            . ${{ matrix.DESTPATH }}
-
+          cp -a . ${{ matrix.DESTPATH }}
           cd ${{ matrix.DESTPATH }}
-
-          # ---------------------------
-          # Clean Deno state
-          # ---------------------------
-          rm -f deno.lock
-
-          # ---------------------------
-          # Install TREX and make it available
-          # ---------------------------
-          npm install @data2evidence/trex
-          export PATH="$(pwd)/node_modules/.bin:$PATH"
-
-          echo "Using TREX from: $(which trex)"
-          trex --version || echo "TREX not found"
-
-          # ---------------------------
-          # Set TREX docker tag
-          # ---------------------------
-          export TREX_DOCKER_TAG=sha256:12df563679a5e952b50a4d2a4d34dc598c05787193164eee84303909c059a0a8
+          export TREX_DOCKER_TAG=sha256:468f1fa411b288f8ebac842dc0982bb7b8cb2d5eeb8dc25a494b734fcacfac42
+          #$(grep -m1 '^FROM ' $GITHUB_WORKSPACE/services/trex/Dockerfile | sed -E 's/.*@(sha256:[a-f0-9]+).*/\1/')
           echo "Using TREX_DOCKER_TAG=$TREX_DOCKER_TAG"
-
-          # ---------------------------
-          # Prepare TREX (creates runtime mirror)
-          # ---------------------------
-          trex prepare || true
-
-          # ---------------------------
-          # Write .npmrc in the Deno runtime folder
-          # This is the folder Deno will actually read
-          # ---------------------------
-          DENO_RUNTIME_DIR="/usr/src/data/plugins/@data2evidence/d2e-fhir-server"
-
-          cat > "$DENO_RUNTIME_DIR/.npmrc" <<EOF
-          @data2evidence:registry=https://npm.pkg.github.com
-          @medplum:registry=https://registry.npmjs.org
-          registry=https://registry.npmjs.org
-          //npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}
-          EOF
-
-          # ---------------------------
-          # Optional sanity check
-          # ---------------------------
-          echo "====== .npmrc that Deno will read ======"
-          ls -l $DENO_RUNTIME_DIR
-          cat $DENO_RUNTIME_DIR/.npmrc
-          echo "========================================"
-
-          # ---------------------------
-          # Ensure persistent Deno cache
-          # ---------------------------
-          export DENO_DIR="$HOME/.cache/deno"
-
-          # ---------------------------
-          # Pre-install Deno npm dependencies
-          # ---------------------------
-          node ${{ github.workspace }}/install-deno-deps.js .
-
-          # ---------------------------
-          # Run TREX build
-          # ---------------------------
+          echo "@data2evidence:registry=https://npm.pkg.github.com" >> ./.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> ./.npmrc
+          npm i @data2evidence/trex
           npm run trex_build
       - name: Use Node.js - OSS Develop
         uses: actions/setup-node@v4
@@ -222,7 +153,7 @@ jobs:
       - name: Publish
         env:
           CI: ${{ matrix.NPM != 'yarn' }}
-          SHOULD_PUBLISH: ${{ github.ref_name == 'main' || github.ref_name == 'csafreen/remove_workers_server' || github.event_name == 'workflow_dispatch' || ( github.event_name == 'pull_request' && !github.event.pull_request.draft ) }}
+          SHOULD_PUBLISH: ${{ github.ref_name == 'main' || github.event_name == 'workflow_dispatch' || ( github.event_name == 'pull_request' && !github.event.pull_request.draft ) }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_PROJECT_TOKEN }}
         run: |
           cd ${{ matrix.DESTPATH || matrix.PKGPATH }}
