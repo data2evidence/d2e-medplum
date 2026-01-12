@@ -142,6 +142,9 @@ jobs:
           # ---------------------------
           # Configure npm registry FIRST
           # ---------------------------
+          export TREX_DOCKER_TAG=sha256:468f1fa411b288f8ebac842dc0982bb7b8cb2d5eeb8dc25a494b734fcacfac42
+          #$(grep -m1 '^FROM ' $GITHUB_WORKSPACE/services/trex/Dockerfile | sed -E 's/.*@(sha256:[a-f0-9]+).*/\1/')
+          echo "Using TREX_DOCKER_TAG=$TREX_DOCKER_TAG"
           echo "@data2evidence:registry=https://npm.pkg.github.com" >> ./.npmrc
           echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> ./.npmrc
 
@@ -150,9 +153,9 @@ jobs:
           # ---------------------------
           export DENO_DIR="${{ matrix.DESTPATH }}/.deno"
           mkdir -p "$DENO_DIR"
-          deno install --allow-scripts 2>/dev/null || echo "⚠️  Deno install had warnings, continuing..."
+          # deno install --allow-scripts 2>/dev/null || echo "⚠️  Deno install had warnings, continuing..."
 
-          npm install @data2evidence/trex
+          npm i @data2evidence/trex
           
           # ---------------------------
           # Print TREX installation details
@@ -164,28 +167,22 @@ jobs:
           ls -la node_modules/@data2evidence/trex/scripts || echo "⚠️  scripts directory not found"
           
           # ---------------------------
-          # Set TREX Docker tag
-          # ---------------------------
-          export TREX_DOCKER_TAG=sha256:12df563679a5e952b50a4d2a4d34dc598c05787193164eee84303909c059a0a8
-          echo "Using TREX_DOCKER_TAG=$TREX_DOCKER_TAG"
-          
-          # ---------------------------
           # Configure Node.js to handle TREX build (avoid Deno type stripping)
           # ---------------------------
-          npm install -g tsx
+          # npm install -g tsx
           
-          # Override tbuild to use tsx instead of deno
-          mkdir -p /usr/local/bin
-          cat > /usr/local/bin/tbuild << 'EOF'
-          #!/bin/bash
-          tsx "$@"
-          EOF
-          chmod +x /usr/local/bin/tbuild
+          # # Override tbuild to use tsx instead of deno
+          # mkdir -p /usr/local/bin
+          # cat > /usr/local/bin/tbuild << 'EOF'
+          # #!/bin/bash
+          # tsx "$@"
+          # EOF
+          # chmod +x /usr/local/bin/tbuild
           
-          # ---------------------------
-          # Run TREX build with wrapper tbuild in PATH
-          # ---------------------------
-          export PATH="/usr/local/bin:$PATH"
+          # # ---------------------------
+          # # Run TREX build with wrapper tbuild in PATH
+          # # ---------------------------
+          # export PATH="/usr/local/bin:$PATH"
           npm run trex_build
 
       - name: Use Node.js - OSS Develop
