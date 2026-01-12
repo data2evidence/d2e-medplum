@@ -60,7 +60,7 @@ jobs:
       matrix:
         include:
           - PKGPATH: ./packages/server/
-            DESTPATH: /usr/src/data/plugins/node_modules/@data2evidence/d2e-fhir-server
+            DESTPATH: /usr/src/data/plugins/@data2evidence/d2e-fhir-server
             NPM: npm
     steps:
       - uses: actions/checkout@v4
@@ -116,21 +116,70 @@ jobs:
         if:  ${{ matrix.DESTPATH }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: | 
+        run: |
+          # Backup package.json
           cp package.json package.org.json
+
+          # ---------------------------
+          # Create destination directory
+          # ---------------------------
           sudo mkdir -p ${{ matrix.DESTPATH }}
           sudo chown runner:docker ${{ matrix.DESTPATH }}
-          cp -a . ${{ matrix.DESTPATH }}
+
+          # ---------------------------
+          # Copy project WITHOUT node_modules
+          # ---------------------------
+          rsync -a \
+            --exclude node_modules \
+            --exclude .git \
+            --exclude deno.lock \
+            . ${{ matrix.DESTPATH }}
+
           cd ${{ matrix.DESTPATH }}
+
+          # ---------------------------
+          # Clean Deno state
+          # ---------------------------
           rm -f deno.lock
-          export TREX_DOCKER_TAG=sha256:12df563679a5e952b50a4d2a4d34dc598c05787193164eee84303909c059a0a8
-          #$(grep -m1 '^FROM ' $GITHUB_WORKSPACE/services/trex/Dockerfile | sed -E 's/.*@(sha256:[a-f0-9]+).*/\1/')
-          echo "Using TREX_DOCKER_TAG=$TREX_DOCKER_TAG"
-          echo "@data2evidence:registry=https://npm.pkg.github.com" >> ./.npmrc
-          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> ./.npmrc
           export DENO_DIR="$HOME/.cache/deno"
-          npm i @data2evidence/trex
+
+          # ---------------------------
+          # Ensure .npmrc is correct for this plugin
+          # ---------------------------
+          echo "@data2evidence:registry=https://npm.pkg.github.com" > .npmrc
+          echo "@medplum:registry=https://registry.npmjs.org" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> .npmrc
+
+          # Also create .npmrc inside the plugin folder
+          mkdir -p plugins/fhir/d2e-fhir-server
+          cat > plugins/fhir/d2e-fhir-server/.npmrc <<EOF
+          @data2evidence:registry=https://npm.pkg.github.com
+          @medplum:registry=https://registry.npmjs.org
+          registry=https://registry.npmjs.org
+          //npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}
+          EOF
+
+          # ---------------------------
+          # Install TREX and plugin dependencies locally
+          # ---------------------------
+          cd plugins/fhir/d2e-fhir-server
+          npm install
+          npm install @data2evidence/trex
+          export PATH="$(pwd)/node_modules/.bin:$PATH"
+
+          echo "Using TREX from: $(which trex)"
+          trex --version || echo "TREX not found"
+
+          # ---------------------------
+          # Pre-install Deno dependencies (TREX requirement)
+          # ---------------------------
+          cd ${{ matrix.DESTPATH }}
           node ${{ github.workspace }}/install-deno-deps.js .
+
+          # ---------------------------
+          # Run TREX build
+          # ---------------------------
+          cd plugins/fhir/d2e-fhir-server
           npm run trex_build
       - name: Use Node.js - OSS Develop
         uses: actions/setup-node@v4
