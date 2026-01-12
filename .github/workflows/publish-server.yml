@@ -159,8 +159,9 @@ jobs:
           export PATH="$(pwd)/node_modules/.bin:$PATH"
 
           # ---------------------------
-          # Run TREX build
+          # Run TREX build (disable type stripping in node_modules)
           # ---------------------------
+          export DENO_NO_PROMPT=1
           npm run trex_build
 
       - name: Use Node.js - OSS Develop
