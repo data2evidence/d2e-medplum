@@ -101,10 +101,8 @@ jobs:
 
       - name: Build
         run: |
-          cat > .npmrc <<EOF
-          @data2evidence:registry=https://pkgs.dev.azure.com/data2evidence/d2e/_packaging/d2e/npm/registry/
-          //pkgs.dev.azure.com/data2evidence/d2e/_packaging/d2e/npm/registry/:_authToken=${NODE_AUTH_TOKEN}
-          EOF
+          echo "@data2evidence:registry=https://npm.pkg.github.com" >> ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> ~/.npmrc
           cd ${{ matrix.PKGPATH }}
           ${{ matrix.NPM == 'yarn' && 'yarn install' ||'npm install --ignore-scripts' }}
         env:
