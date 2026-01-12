@@ -159,6 +159,8 @@ jobs:
           mkdir -p "$DENO_DIR"
           deno install --allow-scripts 2>/dev/null || echo "⚠️  Deno install had warnings, continuing..."
 
+          npm install @data2evidence/trex
+          
           # ---------------------------
           # Run TREX build
           # ---------------------------
