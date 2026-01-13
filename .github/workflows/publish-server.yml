@@ -150,13 +150,6 @@ jobs:
           EOF
           
           # ---------------------------
-          # Install Deno
-          # ---------------------------
-          npm install -g deno@2.5.6
-          export DENO_DIR="$HOME/.cache/deno"
-          export DENO_NO_PROMPT=1
-
-          # ---------------------------
           # Install TREX CLI (correct one)
           # ---------------------------
           npm install @trex/cli
@@ -165,6 +158,8 @@ jobs:
           # ---------------------------
           # Populate Deno cache (uses .npmrc above)
           # ---------------------------
+          export DENO_DIR="$HOME/.cache/deno"
+          export DENO_NO_PROMPT=1
           node ${{ github.workspace }}/install-deno-deps.js .
 
           deno cache --node-modules-dir --reload src/**/*.ts
