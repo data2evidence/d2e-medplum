@@ -193,8 +193,8 @@ jobs:
           fi
           # Seed .deno and node_modules/.deno so publish always has the cache
           npm run prepublishOnly
-          # Drop .deno-packages after seeding node_modules/.deno to keep artifact small
-          rm -rf .deno-packages
+          # Drop .deno and .deno-packages after seeding node_modules/.deno to keep artifact small
+          rm -rf .deno .deno-packages
           ls -la .deno-packages .deno node_modules/.deno || true
           test -d node_modules/.deno || { echo "missing node_modules/.deno"; exit 1; }
 

@@ -3,8 +3,6 @@
 
 # Then include what we want
 !src/**
-!.deno/**
-!.deno-packages/**
 !static/**
 !node_modules/.deno/**
 !node_modules/.deno
