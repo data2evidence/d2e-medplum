@@ -36,8 +36,7 @@
     "postinstall": "bash -c 'mkdir -p node_modules/.deno'",
     "start": "node --require ./dist/otel/instrumentation.js dist/index.js",
     "test": "jest",
-    "test:seed": "jest seed.test.ts --testTimeout=400000",
-    "trex_build": "tbuild ."
+    "test:seed": "jest seed.test.ts --testTimeout=400000"
   },
   "dependencies": {
     "@aws-sdk/client-cloudwatch-logs": "3.849.0",
@@ -107,7 +106,6 @@
     "zod": "3.25.76"
   },
   "devDependencies": {
-    "@trex/cli": "latest",
     "@jest/test-sequencer": "29.7.0",
     "@medplum/fhirtypes": "4.3.6",
     "@types/body-parser": "1.19.6",

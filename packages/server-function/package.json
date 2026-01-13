@@ -14,7 +14,7 @@
     "functions": {
       "init": [
         {
-          "function": "/server/src",
+          "function": "/server",
           "imports": "/server/deno.json",
           "env": "d2e-fhir-server"
         }
@@ -22,7 +22,7 @@
       "api": [
         {
           "source": "/fhir-server",
-          "function": "/server/src",
+          "function": "/server",
           "env": "d2e-fhir-server",
           "imports": "/server/deno.json"
         }
