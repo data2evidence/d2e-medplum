@@ -168,8 +168,9 @@ jobs:
           # ---------------------------
           # Pin TREX docker image
           # ---------------------------
-          export TREX_DOCKER_TAG=sha256:12df563679a5e952b50a4d2a4d34dc598c05787193164eee84303909c059a0a8
-          echo "Using TREX_DOCKER_TAG=$TREX_DOCKER_TAG"
+          # export TREX_DOCKER_TAG=sha256:12df563679a5e952b50a4d2a4d34dc598c05787193164eee84303909c059a0a8
+          # export DUCKDB_EXTENSION_PATH="$(pwd)/node_modules/@trex/cli/duckdb_extensions"
+          # echo "Using TREX_DOCKER_TAG=$TREX_DOCKER_TAG"
 
           # ---------------------------
           # Build

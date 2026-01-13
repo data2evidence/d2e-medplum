@@ -27,9 +27,10 @@ function installDependencies(folderPath, errorSummary) {
     return false;
   }
 
-  const nodeModulesPath = path.join(folderPath, 'node_modules');
-  if (fs.existsSync(nodeModulesPath)) {
-    fs.rmSync(nodeModulesPath, { recursive: true, force: true });
+  // Keep existing node_modules (npm deps); only clear Deno cache inside it if present
+  const nodeModulesDenoPath = path.join(folderPath, 'node_modules', '.deno');
+  if (fs.existsSync(nodeModulesDenoPath)) {
+    fs.rmSync(nodeModulesDenoPath, { recursive: true, force: true });
   }
 
   try {
