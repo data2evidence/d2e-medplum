@@ -302,7 +302,7 @@
     "/var/tmp/sb-compile-trex/d2e-fhir-server/src/bots/types": "./src/bots/types.ts",
     "/var/tmp/sb-compile-trex/d2e-fhir-server/src/bots/utils": "./src/bots/utils.ts",
     "/var/tmp/sb-compile-trex/d2e-fhir-server/src/bots/vmcontext": "./src/bots/vmcontext.ts",
-    "/var/tmp/sb-compile-trex/d2e-fhir-server/src/index": "./src/index.ts",
+    "/var/tmp/sb-compile-trex/d2e-fhir-server/index": "./index.ts",
     "/var/tmp/sb-compile-trex/d2e-fhir-server/src/otel/otel": "./src/otel/otel.ts",
     "/var/tmp/sb-compile-trex/d2e-fhir-server/src/otel/instrumentation": "./src/otel/instrumentation.ts",
     "/var/tmp/sb-compile-trex/d2e-fhir-server/src/oauth/middleware": "./src/oauth/middleware.ts",
