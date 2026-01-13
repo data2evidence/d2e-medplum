@@ -59,7 +59,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - PKGPATH: ./packages/server/
+          - PKGPATH: ./packages/server-function/
             DESTPATH: /usr/src/data/plugins/@data2evidence/d2e-fhir-server
             NPM: npm
     steps:
@@ -79,19 +79,11 @@ jobs:
         if: ${{ matrix.NPM }}
         run: | 
           npm install -g ${{ matrix.NPM }}
-          sudo mkdir -p ${{ matrix.DESTPATH }}
-          sudo chown runner:docker ${{ matrix.DESTPATH }}
-          cd ${{ matrix.DESTPATH }}
-          cat > .npmrc <<EOF
-          @trex:registry=https://pkgs.dev.azure.com/data2evidence/d2e/_packaging/d2e/npm/registry/
-          //pkgs.dev.azure.com/data2evidence/d2e/_packaging/d2e/npm/registry/:_authToken=${NODE_AUTH_TOKEN}
-          EOF
 
       - name: Install dependencies
         if: ${{ matrix.DESTPATH }}
         run: |
           echo "@trex:registry=https://pkgs.dev.azure.com/data2evidence/d2e/_packaging/d2e/npm/registry" >> ~/.npmrc
-          npm config get userconfig
           npm install -g deno@2.5.6
           node ./install-deno-deps.js ${{ matrix.PKGPATH }}
         env:
@@ -110,8 +102,7 @@ jobs:
       - name: Build
         run: |
           cd ${{ matrix.PKGPATH }}
-          echo "@trex:registry=https://pkgs.dev.azure.com/data2evidence/d2e/_packaging/d2e/npm/registry" >> .npmrc
-          npm install
+          npm install --ignore-scripts
         env:
           CI: ${{ matrix.NPM != 'yarn' }}
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -128,6 +119,8 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cp package.json package.org.json
+          sudo mkdir -p ${{ matrix.DESTPATH }}
+          sudo chown runner:docker ${{ matrix.DESTPATH }}
           cp -a . ${{ matrix.DESTPATH }}
           cd ${{ matrix.DESTPATH }}
           
