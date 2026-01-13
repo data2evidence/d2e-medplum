@@ -121,15 +121,26 @@ function main() {
   }
 
   const entries = fs.readdirSync(FUNCTIONS_DIR, { withFileTypes: true });
+
   const folders = entries
     .filter(entry => entry.isDirectory())
     .map(entry => entry.name)
     .filter(name => !name.startsWith('_'));
 
-  const foldersWithDenoJson = folders.filter(folderName => {
+  const foldersWithDenoJson = [];
+
+  // Handle deno.json in the root of FUNCTIONS_DIR
+  if (entries.some(entry => !entry.isDirectory() && entry.name === 'deno.json')) {
+    foldersWithDenoJson.push('.');
+  }
+
+  // Handle deno.json inside subfolders
+  folders.forEach(folderName => {
     const folderPath = path.join(FUNCTIONS_DIR, folderName);
     const denoJsonPath = path.join(folderPath, 'deno.json');
-    return fs.existsSync(denoJsonPath);
+    if (fs.existsSync(denoJsonPath)) {
+      foldersWithDenoJson.push(folderName);
+    }
   });
 
   console.log(`Found ${foldersWithDenoJson.length} folders with deno.json files:\n`);
@@ -141,7 +152,7 @@ function main() {
   }
 
   foldersWithDenoJson.forEach(folderName => {
-    const folderPath = path.join(FUNCTIONS_DIR, folderName);
+    const folderPath = folderName === '.' ? FUNCTIONS_DIR : path.join(FUNCTIONS_DIR, folderName);
     installDependencies(folderPath, errorSummary);
   });
 
