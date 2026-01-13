@@ -132,8 +132,8 @@ jobs:
           # export PATH="$(pwd)/node_modules/.bin:$PATH"
           export DENO_DIR="$HOME/.cache/deno"
           node ${{ github.workspace }}/install-deno-deps.js .
-          ls -l
-          npx tbuild .
+          # npx tbuild .
+          cat package.json
           npm run build
 
       - name: Use Node.js - OSS Develop
