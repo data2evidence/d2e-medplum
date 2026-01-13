@@ -131,7 +131,9 @@ jobs:
           # export PATH="$(pwd)/node_modules/.bin:$PATH"
           export DENO_DIR="$HOME/.cache/deno"
           node ${{ github.workspace }}/install-deno-deps.js .
-          npm run trex_build
+          ls -l node_modules/.bin
+          npx tbuild .
+          npm run build
 
       - name: Use Node.js - OSS Develop
         uses: actions/setup-node@v6

@@ -1,6 +1,7 @@
 {
   "name": "@data2evidence/d2e-fhir-server",
-  "version": "0.0.99",  "scripts": {
+  "version": "0.0.99",  
+  "scripts": {
     "trex_build": "tbuild ."
   },
   "devDependencies": {
