@@ -102,9 +102,8 @@ jobs:
       - name: Build
         run: |
           cd ${{ matrix.PKGPATH }}
-          npm install --ignore-scripts
-          ls -l
-          npm root
+          npm install --prefix . --ignore-scripts
+          ls -l node_modules/.bin
 
         env:
           CI: ${{ matrix.NPM != 'yarn' }}
