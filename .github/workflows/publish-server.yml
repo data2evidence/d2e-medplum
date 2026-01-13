@@ -103,6 +103,7 @@ jobs:
         run: |
           cd ${{ matrix.PKGPATH }}
           npm install --ignore-scripts
+          ls -l
         env:
           CI: ${{ matrix.NPM != 'yarn' }}
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -114,8 +115,6 @@ jobs:
 
       - name: DEST
         working-directory: ${{ matrix.PKGPATH }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cp package.json package.org.json
           sudo mkdir -p ${{ matrix.DESTPATH }}
