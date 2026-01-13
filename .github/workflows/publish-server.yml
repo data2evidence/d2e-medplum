@@ -104,6 +104,8 @@ jobs:
           cd ${{ matrix.PKGPATH }}
           npm install --ignore-scripts
           ls -l
+          npm root
+
         env:
           CI: ${{ matrix.NPM != 'yarn' }}
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
