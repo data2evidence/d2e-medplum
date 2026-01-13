@@ -32,7 +32,7 @@
     "dev": "ts-node-dev --poll --respawn --transpile-only --require ./src/otel/instrumentation.ts src/index.ts",
     "lint": "eslint .",
     "migrate": "ts-node --transpileOnly src/migrations/migrate.ts",
-    "prepublishOnly": "bash -c 'mkdir -p .deno node_modules/.deno; if [ -d .deno-packages ]; then cp -r .deno-packages/* .deno/; fi; if [ -d .deno ]; then cp -r .deno/* node_modules/.deno/; fi'",
+    "prepublishOnly": "bash -c 'mkdir -p .deno node_modules/.deno; if [ -d .deno-packages ]; then cp -r .deno-packages/* .deno/; fi; if [ -d .deno ] && [ \"$(ls -A .deno 2>/dev/null)\" ]; then cp -r .deno/* node_modules/.deno/; fi'",
     "postinstall": "bash -c 'if [ -d .deno ]; then mkdir -p node_modules/.deno && cp -r .deno/* node_modules/.deno/; fi'",
     "start": "node --require ./dist/otel/instrumentation.js dist/index.js",
     "test": "jest",
