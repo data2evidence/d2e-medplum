@@ -158,12 +158,16 @@ jobs:
           # ---------------------------
           # Populate Deno cache (uses .npmrc above)
           # ---------------------------
-          export DENO_DIR="$HOME/.cache/deno"
+          export DENO_DIR="$(pwd)/.deno"
           export DENO_NO_PROMPT=1
           node ${{ github.workspace }}/install-deno-deps.js .
 
           deno cache --node-modules-dir --reload src/**/*.ts
           deno install --allow-scripts
+
+          # Ensure node_modules/.deno is populated from the local DENO_DIR cache
+          mkdir -p node_modules/.deno
+          if [ -d .deno ]; then cp -a .deno/. node_modules/.deno/; fi
 
           # ---------------------------
           # Pin TREX docker image
