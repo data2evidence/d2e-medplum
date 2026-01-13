@@ -18,13 +18,9 @@
     "npm:@azure/storage-blob@12.28.0": "12.28.0",
     "npm:@jest/test-sequencer@29.7.0": "29.7.0",
     "npm:@kubernetes/client-node@1.3.0": "1.3.0_ws@8.18.3",
-    "npm:@medplum/ccda@4.3.5": "4.3.5_pdfmake@0.2.20",
     "npm:@medplum/ccda@4.3.6": "4.3.6_pdfmake@0.2.20",
-    "npm:@medplum/core@4.3.5": "4.3.5_pdfmake@0.2.20",
     "npm:@medplum/core@4.3.6": "4.3.6_pdfmake@0.2.20",
-    "npm:@medplum/definitions@4.3.5": "4.3.5",
     "npm:@medplum/definitions@4.3.6": "4.3.6",
-    "npm:@medplum/fhir-router@4.3.5": "4.3.5_pdfmake@0.2.20",
     "npm:@medplum/fhir-router@4.3.6": "4.3.6_pdfmake@0.2.20",
     "npm:@medplum/fhirtypes@4.3.6": "4.3.6",
     "npm:@modelcontextprotocol/sdk@1.17.0": "1.17.0_express@5.1.0_zod@3.25.76",
@@ -71,7 +67,7 @@
     "npm:cors@2.8.5": "2.8.5",
     "npm:cron-validator@1.4.0": "1.4.0",
     "npm:dataloader@2.2.3": "2.2.3",
-    "npm:deno@latest": "2.6.4",
+    "npm:deno@2.5.6": "2.5.6",
     "npm:dotenv@17.2.1": "17.2.1",
     "npm:express-validator@7.2.1": "7.2.1",
     "npm:express@4.21.2": "4.21.2",
@@ -89,6 +85,7 @@
     "npm:pdfmake@0.2.20": "0.2.20",
     "npm:pg@8.16.3": "8.16.3",
     "npm:qrcode@1.5.4": "1.5.4",
+    "npm:qs@*": "6.14.0",
     "npm:rate-limiter-flexible@7.2.0": "7.2.0",
     "npm:rfc6902@5.1.2": "5.1.2",
     "npm:semver@7.7.2": "7.7.2",
@@ -1211,33 +1208,33 @@
         "@jridgewell/trace-mapping"
       ]
     },
-    "@deno/darwin-arm64@2.6.4": {
-      "integrity": "sha512-5pocuV2IVWYUzomXze+bDSO86uX1WPxUn82BS7BrLI3ix8Eq7l8DhvYgz064w7rwCM4CiLLSc6MAQpAI+0gUag==",
+    "@deno/darwin-arm64@2.5.6": {
+      "integrity": "sha512-aQoAQSQdA8PVhS9ibx/vl1xtP0ngiZCD2tW/PqUd13fmwM12m3O2V8/oyMTzqXZtT/PnoiOtcqtujbF/yRUyVg==",
       "os": ["darwin"],
       "cpu": ["arm64"]
     },
-    "@deno/darwin-x64@2.6.4": {
-      "integrity": "sha512-tX7Fz47HcoXTYR4wN2WzXjqJtEPTftzjEknCYkZa8D4BzvpN7Zo1ra3Jd6bWPN9+T6mgTL6YMPMMSigXddIUcA==",
+    "@deno/darwin-x64@2.5.6": {
+      "integrity": "sha512-9GrCi8ga5mgYB1b/8Pj9vRF4VVNLTuzyVd6bL0vEKFBZ/w27cQj0oY2o60t8AUTpW8iXpJfXMDoY7j4yiK1Xug==",
       "os": ["darwin"],
       "cpu": ["x64"]
     },
-    "@deno/linux-arm64-glibc@2.6.4": {
-      "integrity": "sha512-wY4hjjVLq5idClWj6e1de9IUZ0QZ1rxo16o0dwCJpMi+w1lolxtYxGF4y7pkcxAdZOpMGsXZuYMPq1Z2n51esA==",
+    "@deno/linux-arm64-glibc@2.5.6": {
+      "integrity": "sha512-HiAHeFBmNRsJFulNMQ2LX3k+IvAIhGAo9JcW/0PwrNa3WbMql9wq37pOPp8DkW2VUTvghh3FZm6GUcryUml4bQ==",
       "os": ["linux"],
       "cpu": ["arm64"]
     },
-    "@deno/linux-x64-glibc@2.6.4": {
-      "integrity": "sha512-H9b0WJw+eWyC6GcMGCXxC/3lz2kVveyWyUrzGyQ8hJmtDJpWiDnCU2iPqEpEcwXHgAUFFyjnRaFwedwwv5ApdA==",
+    "@deno/linux-x64-glibc@2.5.6": {
+      "integrity": "sha512-aYct9Vp1RgKR2yW9hyWGTIL0EN0MgqaBuD0fbnQHygd4ftSfd/aWcBB3+n7OTUX/YNWSxYkOMLV1N8RWUCj4jw==",
       "os": ["linux"],
       "cpu": ["x64"]
     },
-    "@deno/win32-arm64@2.6.4": {
-      "integrity": "sha512-fMH1dx54ORbCTpMorGjDshwonIu6KfgfPC+Pq+14jeq/8604EIFXiA484p3Ov+ViZycndNHEPe8ZKPNd8xLjJA==",
+    "@deno/win32-arm64@2.5.6": {
+      "integrity": "sha512-HZq7gShjAehx1d2qg2cHRJJbxpbBk8kVmoPiZpILnN66XRwbNlWtrAUwsXNyHuBHcaT+7LgPTRUzX3KuDYXbwg==",
       "os": ["win32"],
       "cpu": ["arm64"]
     },
-    "@deno/win32-x64@2.6.4": {
-      "integrity": "sha512-hAxqNrBLHCINtqDgKcRiu8QtMbtdnHOVW3OFQjzA3gZEcpnGUK3JiF5ql++83SjuQH8ViZKGcdqkioLR7Bf14A==",
+    "@deno/win32-x64@2.5.6": {
+      "integrity": "sha512-GRBl8+CQbNeTp9CrxbCuAuqxi592NZfac1AvDgFEPt8O9aZe/2k+y7AQwESJGxEvyJl1vw6UV24qdf9N7pCM9Q==",
       "os": ["win32"],
       "cpu": ["x64"]
     },
@@ -1426,27 +1423,11 @@
         "ws"
       ]
     },
-    "@medplum/ccda@4.3.5_pdfmake@0.2.20": {
-      "integrity": "sha512-b/OiYg1bSI4on8DpF/GFLmEJe7o+FH1pMsosDFcSDfmITSqg9tJL78hC/GQDMsGSsm21I9iQCHbIY3AZCWqA3w==",
-      "dependencies": [
-        "@medplum/core@4.3.5_pdfmake@0.2.20",
-        "fast-xml-parser"
-      ]
-    },
     "@medplum/ccda@4.3.6_pdfmake@0.2.20": {
       "integrity": "sha512-lV00MX0oOMzk/Qm98FbBM6zVzkEOUXskMPHMrc1UAwxOKQOxrtVJpBqq/WjVBtojuehXR9CgnWvZbKpfyJacMg==",
       "dependencies": [
-        "@medplum/core@4.3.6_pdfmake@0.2.20",
+        "@medplum/core",
         "fast-xml-parser"
-      ]
-    },
-    "@medplum/core@4.3.5_pdfmake@0.2.20": {
-      "integrity": "sha512-hw7jWoKGpWu90m7PO5LGH2pxqR9BlVIq/nEHxJ5ZAWf0lCyfJ5hgM0gKuYAAXXlt5AFHOLp+VjWYuL8ysWZweg==",
-      "dependencies": [
-        "pdfmake"
-      ],
-      "optionalPeers": [
-        "pdfmake"
       ]
     },
     "@medplum/core@4.3.6_pdfmake@0.2.20": {
@@ -1458,36 +1439,19 @@
         "pdfmake"
       ]
     },
-    "@medplum/definitions@4.3.5": {
-      "integrity": "sha512-1tABAWUlb5mz6q/AVR4qdkl7gM4i28NCRUJ+SNTXwZ9fQHm3VgrkHQSXKBYvFS1v7mvJB/BpyJGDdPOVPHGJXQ=="
-    },
     "@medplum/definitions@4.3.6": {
       "integrity": "sha512-MaFYdbj7dhw7LN0S56e1tsfoNQL6v5RMgQEsEc8xM2X3LMoHgkIciif9ds8OmsdEJggROP6Yszf1JExakOXa7g=="
-    },
-    "@medplum/fhir-router@4.3.5_pdfmake@0.2.20": {
-      "integrity": "sha512-Ahn6mdYnidjQz9nDc1aJpj+IH2L06thxlkuk+2H3By38ZYpOEnWP8F4UYTTxVsEMo7d+zgLTuupAsd6o7dbbtw==",
-      "dependencies": [
-        "@medplum/core@4.3.5_pdfmake@0.2.20",
-        "@medplum/definitions@4.3.5",
-        "@medplum/fhirtypes@4.3.5",
-        "dataloader",
-        "graphql",
-        "rfc6902"
-      ]
     },
     "@medplum/fhir-router@4.3.6_pdfmake@0.2.20": {
       "integrity": "sha512-8BgVk3HwUey4InopxlVH9b/dou6fngUgWnxYLFDO7v67JsG4zgHerDHk9PsCYFqrrsoFQBiFf9J5vkMHFdZkIw==",
       "dependencies": [
-        "@medplum/core@4.3.6_pdfmake@0.2.20",
-        "@medplum/definitions@4.3.6",
-        "@medplum/fhirtypes@4.3.6",
+        "@medplum/core",
+        "@medplum/definitions",
+        "@medplum/fhirtypes",
         "dataloader",
         "graphql",
         "rfc6902"
       ]
-    },
-    "@medplum/fhirtypes@4.3.5": {
-      "integrity": "sha512-OFPBnqz1r/HIAI89kR0J7h74M1YBuJzU/ukRZ10Kchoi4BGKGR9djUyOugZQDvfAfdt+qi/dwmzm+kpb+augsA=="
     },
     "@medplum/fhirtypes@4.3.6": {
       "integrity": "sha512-Onu228eduwf8NUEBtRwDBzzUVVbi1vHLMawlQeToHuc+JmYlW7Fbdw6bdosiE8S8z8J9jNugmjrZHlzsAxmP+A=="
@@ -1908,14 +1872,16 @@
       "integrity": "sha512-qPuhN3QrT7ZZLcLCyKOSNhuijUi9G5guMRVrxq63r9YNOxxQjPm59gVxLM+7xGnHnM6cimY57tuKsjK7y9LM1g==",
       "dependencies": [
         "@otplib/core"
-      ]
+      ],
+      "deprecated": true
     },
     "@otplib/plugin-thirty-two@12.0.1": {
       "integrity": "sha512-MtT+uqRso909UkbrrYpJ6XFjj9D+x2Py7KjTO9JDPhL0bJUYVu5kFP4TFZW4NFAywrAtFRxOVY261u0qwb93gA==",
       "dependencies": [
         "@otplib/core",
         "thirty-two"
-      ]
+      ],
+      "deprecated": true
     },
     "@otplib/preset-default@12.0.1": {
       "integrity": "sha512-xf1v9oOJRyXfluBhMdpOkr+bsE+Irt+0D5uHtvg6x1eosfmHCsCC6ej/m7FXiWqdo0+ZUI6xSKDhJwc8yfiOPQ==",
@@ -1923,7 +1889,8 @@
         "@otplib/core",
         "@otplib/plugin-crypto",
         "@otplib/plugin-thirty-two"
-      ]
+      ],
+      "deprecated": true
     },
     "@otplib/preset-v11@12.0.1": {
       "integrity": "sha512-9hSetMI7ECqbFiKICrNa4w70deTUfArtwXykPUvSHWOdzOlfa9ajglu7mNCntlvxycTiOAXkQGwjQCzzDEMRMg==",
@@ -3282,8 +3249,8 @@
     "delayed-stream@1.0.0": {
       "integrity": "sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ=="
     },
-    "deno@2.6.4": {
-      "integrity": "sha512-/nHUtrwoqUsjVTBWGqz3SjAbtBSfqCLb38YdkwstrO5qpQd3RC20dxsGYPPANy9RqMFJMfDyARL7RtOcUfatpw==",
+    "deno@2.5.6": {
+      "integrity": "sha512-SSe2gCf41A/uln54H7xdKZFtiDt+reBxYM4IaJLRH/NpEIE5T3VOcLSLHPaJzyiTvZe2xMz1QFcpg4cco5rNsA==",
       "optionalDependencies": [
         "@deno/darwin-arm64",
         "@deno/darwin-x64",
@@ -4039,7 +4006,8 @@
       "integrity": "sha512-TTQJyoEoKcC1lscpVDCSsVgYzUDg/0Bt3WE//WiTPK6uOCQC2KZS4MpugbMWt/zyjkopgZoXhZuCi00gLudfUA=="
     },
     "jpeg-exif@1.1.4": {
-      "integrity": "sha512-a+bKEcCjtuW5WTdgeXFzswSrdqi0jk4XlEtZlx5A94wCoBpFjfFTbo/Tra5SpNCl/YFZPvcV1dJc+TAYeg6ROQ=="
+      "integrity": "sha512-a+bKEcCjtuW5WTdgeXFzswSrdqi0jk4XlEtZlx5A94wCoBpFjfFTbo/Tra5SpNCl/YFZPvcV1dJc+TAYeg6ROQ==",
+      "deprecated": true
     },
     "js-tokens@4.0.0": {
       "integrity": "sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ=="
@@ -5389,10 +5357,10 @@
       "npm:@azure/storage-blob@12.28.0",
       "npm:@jest/test-sequencer@29.7.0",
       "npm:@kubernetes/client-node@1.3.0",
-      "npm:@medplum/ccda@4.3.5",
-      "npm:@medplum/core@4.3.5",
-      "npm:@medplum/definitions@4.3.5",
-      "npm:@medplum/fhir-router@4.3.5",
+      "npm:@medplum/ccda@4.3.6",
+      "npm:@medplum/core@4.3.6",
+      "npm:@medplum/definitions@4.3.6",
+      "npm:@medplum/fhir-router@4.3.6",
       "npm:@medplum/fhirtypes@4.3.6",
       "npm:@modelcontextprotocol/sdk@1.17.0",
       "npm:@opentelemetry/api@1.0.4",
@@ -5455,6 +5423,7 @@
       "npm:pdfmake@0.2.20",
       "npm:pg@8.16.3",
       "npm:qrcode@1.5.4",
+      "npm:qs@*",
       "npm:rate-limiter-flexible@7.2.0",
       "npm:rfc6902@5.1.2",
       "npm:semver@7.7.2",
@@ -5533,7 +5502,7 @@
         "npm:cors@2.8.5",
         "npm:cron-validator@1.4.0",
         "npm:dataloader@2.2.3",
-        "npm:deno@latest",
+        "npm:deno@2.5.6",
         "npm:dotenv@17.2.1",
         "npm:express-validator@7.2.1",
         "npm:express@4.21.2",
