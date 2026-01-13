@@ -5,6 +5,8 @@
 !src/**
 !.deno/**
 !static/**
+!node_modules/.deno/**
+!node_modules/.deno
 !package.json
 !deno.json
 !deno.lock
