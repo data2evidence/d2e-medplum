@@ -170,6 +170,7 @@
     "/var/tmp/sb-compile-trex/d2e-fhir-server/src/seeds/structuredefinitions": "./src/seeds/structuredefinitions.ts",
     "/var/tmp/sb-compile-trex/d2e-fhir-server/src/seeds/valuesets": "./src/seeds/valuesets.ts",
     "/var/tmp/sb-compile-trex/d2e-fhir-server/src/fhir/sql": "./src/fhir/sql.ts",
+    "/var/tmp/sb-compile-trex/d2e-fhir-server/src/migration/types": "./src/migration/types.ts",
     "/var/tmp/sb-compile-trex/d2e-fhir-server/src/migrations/migration-utils": "./src/migrations/migration-utils.ts",
     "/var/tmp/sb-compile-trex/d2e-fhir-server/src/migrations/migrate": "./src/migrations/migrate.ts",
     "/var/tmp/sb-compile-trex/d2e-fhir-server/src/migrations/migrate-utils": "./src/migrations/migrate-utils.ts",
