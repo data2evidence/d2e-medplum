@@ -47,6 +47,7 @@ function installDependencies(folderPath, errorSummary) {
       .map(candidate => ({ candidate, full: path.join(folderPath, candidate) }))
       .find(({ full }) => fs.existsSync(full))?.candidate;
 
+    console.log(`  🚀 Using entrypoint: ${entrypoint || 'none found'}`);
     if (entrypoint) {
       execSync(`deno cache ${entrypoint}`, {
         cwd: folderPath,
