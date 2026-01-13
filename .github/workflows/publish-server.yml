@@ -90,7 +90,7 @@ jobs:
       - name: Install dependencies
         if: ${{ matrix.DESTPATH }}
         run: |
-          echo "@trex:registry=https://pkgs.dev.azure.com/data2evidence/d2e/_packaging/d2e/npm/registry" >> $NPM_CONFIG_USERCONFIG
+          echo "@trex:registry=https://pkgs.dev.azure.com/data2evidence/d2e/_packaging/d2e/npm/registry" >> ~/.npmrc
           npm config get userconfig
           npm install -g deno@2.5.6
           node ./install-deno-deps.js ${{ matrix.PKGPATH }}
