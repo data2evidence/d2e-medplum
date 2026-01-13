@@ -77,7 +77,13 @@ jobs:
 
       - name: Setup NPM
         if: ${{ matrix.NPM }}
-        run: npm install -g ${{ matrix.NPM }}
+        run: | 
+          npm install -g ${{ matrix.NPM }}
+          cd ${{ matrix.DESTPATH }}
+          cat > .npmrc <<EOF
+          @trex:registry=https://pkgs.dev.azure.com/data2evidence/d2e/_packaging/d2e/npm/registry/
+          //pkgs.dev.azure.com/data2evidence/d2e/_packaging/d2e/npm/registry/:_authToken=${NODE_AUTH_TOKEN}
+          EOF
 
       - name: Install dependencies
         if: ${{ matrix.DESTPATH }}
@@ -122,13 +128,6 @@ jobs:
           sudo chown runner:docker ${{ matrix.DESTPATH }}
           cp -a . ${{ matrix.DESTPATH }}
           cd ${{ matrix.DESTPATH }}
-
-          cat > .npmrc <<EOF
-          //npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}
-          @trex:registry=https://pkgs.dev.azure.com/data2evidence/d2e/_packaging/d2e/npm/registry/
-          //pkgs.dev.azure.com/data2evidence/d2e/_packaging/d2e/npm/registry/:_authToken=${NODE_AUTH_TOKEN}
-          registry=https://registry.npmjs.org
-          EOF
           
           # ---------------------------
           # Install TREX CLI (correct one)
