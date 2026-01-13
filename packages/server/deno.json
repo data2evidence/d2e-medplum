@@ -470,7 +470,7 @@
     "./src/workers/reindex": "./src/workers/reindex.ts",
     "./src/workers/subscription": "./src/workers/subscription.ts",
     "./src/workers/utils": "./src/workers/utils.ts",
-    "fhir/r4": "npm:@medplum/definitions@4.3.6/4.3.6/dist/fhir/r4",
+    "fhir/r4": "npm:@medplum/definitions@4.3.6/dist/fhir/r4",
     "fhir/r4/profiles-types.json": "npm:@medplum/definitions@4.3.6/4.3.6/dist/fhir/r4/profiles-types.json"
   },
   "unstable": ["sloppy-imports", "node-globals", "detect-cjs"]
