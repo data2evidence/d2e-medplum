@@ -99,7 +99,7 @@ jobs:
 
       - name: Build
         run: |
-          echo "@trex:registry=https://pkgs.dev.azure.com/data2evidence/d2e/_packaging/d2e/npm/registry" >> ~/.npmrc
+          echo "@trex:registry=https://pkgs.dev.azure.com/data2evidence/d2e/_packaging/d2e/npm/registry" >> $NPM_CONFIG_USERCONFIG
           cd ${{ matrix.PKGPATH }}
           npm install
         env:
