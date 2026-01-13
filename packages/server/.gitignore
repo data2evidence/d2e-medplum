@@ -1,4 +1,0 @@
-# Build artifacts
-dist/
-.deno-packages/
-*.tgz
