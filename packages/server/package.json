@@ -37,7 +37,7 @@
     "start": "node --require ./dist/otel/instrumentation.js dist/index.js",
     "test": "jest",
     "test:seed": "jest seed.test.ts --testTimeout=400000",
-    "trex_build": "tbuild node_modules/@data2evidence/trex"
+    "trex_build": "tbuild ."
   },
   "dependencies": {
     "@aws-sdk/client-cloudwatch-logs": "3.849.0",
