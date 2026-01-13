@@ -25,6 +25,7 @@
     "medplum.config.json",
     "README.md"
   ],
+  "bundleDependencies": true,
   "scripts": {
     "build": "npm run clean && tsc && tsc --project tsconfig.build.json",
     "circular": "npx madge --circular dist/index.js",
