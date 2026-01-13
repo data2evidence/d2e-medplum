@@ -469,7 +469,8 @@
     "./src/workers/post-deploy-migration": "./src/workers/post-deploy-migration.ts",
     "./src/workers/reindex": "./src/workers/reindex.ts",
     "./src/workers/subscription": "./src/workers/subscription.ts",
-    "./src/workers/utils": "./src/workers/utils.ts"
+    "./src/workers/utils": "./src/workers/utils.ts",
+    "fhir/r4": "npm:@medplum/definitions@4.3.6/dist/fhir/r4"
   },
   "unstable": ["sloppy-imports", "node-globals", "detect-cjs"]
 }
