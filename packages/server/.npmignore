@@ -3,7 +3,7 @@
 
 # Then include what we want
 !src/**
-!node_modules/.deno/**
+!.deno/**
 !static/**
 !package.json
 !deno.json
