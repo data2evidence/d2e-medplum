@@ -2,7 +2,8 @@ import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { resolve, dirname } from 'path';
 //@ts-ignore
-const __dirname = dirname(fileURLToPath(import.meta.url)).replace(/\/src$/, '/dist');
+// const __dirname = dirname(fileURLToPath(import.meta.url)).replace(/\/src$/, '/dist');
+const __dirname = "/usr/src/data/plugins/@data2evidence/d2e-fhir-server/src/definitions/dist/";
 
 export function readJson(filename: string): any {
   let baseDir: string = "";
