@@ -101,13 +101,15 @@ jobs:
             jq --arg v "-$(date +%s)-$GITHUB_SHA" '.version+=$v' package.json > tmppkg; mv tmppkg package.json
           fi
 
-      # - name: Build
-      #   run: |
-      #     cd ${{ matrix.PKGPATH }}
-      #     npm run build
-      #   env:
-      #     CI: ${{ matrix.NPM != 'yarn' }}
-      #     NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build
+        run: |
+          echo "@data2evidence:registry=https://npm.pkg.github.com" >> ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> ~/.npmrc
+          cd ${{ matrix.PKGPATH }}
+          ${{ matrix.NPM == 'yarn' && 'yarn install' ||'npm install --ignore-scripts' }}
+        env:
+          CI: ${{ matrix.NPM != 'yarn' }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Patch Package
         if: ${{ matrix.NPM }}
@@ -122,6 +124,22 @@ jobs:
           sudo chown runner:docker ${{ matrix.DESTPATH }}
           cp -a . ${{ matrix.DESTPATH }}
           cd ${{ matrix.DESTPATH }}
+
+          cat > .npmrc <<EOF
+          @data2evidence:registry=https://npm.pkg.github.com
+          //npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}
+          @trex:registry=https://pkgs.dev.azure.com/data2evidence/d2e/_packaging/d2e/npm/registry/
+          //pkgs.dev.azure.com/data2evidence/d2e/_packaging/d2e/npm/registry/:_authToken=${NODE_AUTH_TOKEN}
+          registry=https://registry.npmjs.org
+          EOF
+          
+          # ---------------------------
+          # Install TREX CLI
+          # ---------------------------
+          npm install @trex/cli
+          export PATH="$(pwd)/node_modules/.bin:$PATH"
+          export DENO_DIR="$HOME/.cache/deno"
+          node ${{ github.workspace }}/install-deno-deps.js .
           npm run trex_build
 
       - name: Use Node.js - OSS Develop

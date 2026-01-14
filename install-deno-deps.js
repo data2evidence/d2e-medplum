@@ -27,18 +27,27 @@ function installDependencies(folderPath, errorSummary) {
     return false;
   }
 
-  const nodeModulesPath = path.join(folderPath, 'node_modules');
-  const isRootFolder = folderName === '';
-  
-  if (!isRootFolder && fs.existsSync(nodeModulesPath)) {
-    fs.rmSync(nodeModulesPath, { recursive: true, force: true });
+  // Keep existing node_modules (npm deps); only clear Deno cache inside it if present
+  const nodeModulesDenoPath = path.join(folderPath, 'node_modules', '.deno');
+  if (fs.existsSync(nodeModulesDenoPath)) {
+    fs.rmSync(nodeModulesDenoPath, { recursive: true, force: true });
   }
 
   try {
     console.log(`🔧 Installing dependencies for ${folderName}...`);
 
-    const entrypoint = fs.existsSync(path.join(folderPath, '/src/index.ts')) ? 'src/index.ts' : null;
+    const entrypointCandidates = [
+      'index.ts',
+      path.join('src', 'index.ts'),
+      'main.ts',
+      path.join('src', 'main.ts')
+    ];
 
+    const entrypoint = entrypointCandidates
+      .map(candidate => ({ candidate, full: path.join(folderPath, candidate) }))
+      .find(({ full }) => fs.existsSync(full))?.candidate;
+
+    console.log(`  🚀 Using entrypoint: ${entrypoint || 'none found'}`);
     if (entrypoint) {
       execSync(`deno cache ${entrypoint}`, {
         cwd: folderPath,
@@ -123,25 +132,30 @@ function main() {
   }
 
   const entries = fs.readdirSync(FUNCTIONS_DIR, { withFileTypes: true });
+
   const folders = entries
     .filter(entry => entry.isDirectory())
     .map(entry => entry.name)
     .filter(name => !name.startsWith('_'));
 
-  const foldersWithDenoJson = folders.filter(folderName => {
-    const folderPath = path.join(FUNCTIONS_DIR, folderName);
-    const denoJsonPath = path.join(folderPath, 'deno.json');
-    return fs.existsSync(denoJsonPath);
-  });
+  const foldersWithDenoJson = [];
 
-  if (fs.existsSync(path.join(FUNCTIONS_DIR, 'deno.json'))) {
-    foldersWithDenoJson.push('');
+  // Handle deno.json in the root of FUNCTIONS_DIR
+  if (entries.some(entry => !entry.isDirectory() && entry.name === 'deno.json')) {
+    foldersWithDenoJson.push('.');
   }
 
-  const folderNames = foldersWithDenoJson.map(name => name === '' ? path.basename(FUNCTIONS_DIR) || 'current' : name);
+  // Handle deno.json inside subfolders
+  folders.forEach(folderName => {
+    const folderPath = path.join(FUNCTIONS_DIR, folderName);
+    const denoJsonPath = path.join(folderPath, 'deno.json');
+    if (fs.existsSync(denoJsonPath)) {
+      foldersWithDenoJson.push(folderName);
+    }
+  });
 
   console.log(`Found ${foldersWithDenoJson.length} folders with deno.json files:\n`);
-  console.log(`${folderNames.join(', ')}\n`);
+  console.log(`${foldersWithDenoJson.join(', ')}\n`);
 
   if (foldersWithDenoJson.length === 0) {
     console.log(`No folders with deno.json files found in ${FUNCTIONS_DIR}.`);
@@ -149,7 +163,7 @@ function main() {
   }
 
   foldersWithDenoJson.forEach(folderName => {
-    const folderPath = folderName === '' ? FUNCTIONS_DIR : path.join(FUNCTIONS_DIR, folderName);
+    const folderPath = folderName === '.' ? FUNCTIONS_DIR : path.join(FUNCTIONS_DIR, folderName);
     installDependencies(folderPath, errorSummary);
   });
 
