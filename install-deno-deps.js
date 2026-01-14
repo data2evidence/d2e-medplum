@@ -132,8 +132,14 @@ function main() {
     return fs.existsSync(denoJsonPath);
   });
 
+  if (fs.existsSync(path.join(FUNCTIONS_DIR, 'deno.json'))) {
+    foldersWithDenoJson.push('');
+  }
+
+  const folderNames = foldersWithDenoJson.map(name => name === '' ? path.basename(FUNCTIONS_DIR) || 'current' : name);
+
   console.log(`Found ${foldersWithDenoJson.length} folders with deno.json files:\n`);
-  console.log(`${foldersWithDenoJson.join(', ')}\n`);
+  console.log(`${folderNames.join(', ')}\n`);
 
   if (foldersWithDenoJson.length === 0) {
     console.log(`No folders with deno.json files found in ${FUNCTIONS_DIR}.`);
@@ -141,7 +147,7 @@ function main() {
   }
 
   foldersWithDenoJson.forEach(folderName => {
-    const folderPath = path.join(FUNCTIONS_DIR, folderName);
+    const folderPath = folderName === '' ? FUNCTIONS_DIR : path.join(FUNCTIONS_DIR, folderName);
     installDependencies(folderPath, errorSummary);
   });
 
