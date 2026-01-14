@@ -109,7 +109,7 @@ jobs:
           //pkgs.dev.azure.com/data2evidence/d2e/_packaging/d2e/npm/registry/:_authToken=${NODE_AUTH_TOKEN}
           registry=https://registry.npmjs.org
           EOF
-          npm install --no-save @trex/cli
+          npm install --prefix . @trex/cli
         env:
           CI: ${{ matrix.NPM != 'yarn' }}
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
