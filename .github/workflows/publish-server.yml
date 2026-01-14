@@ -71,21 +71,23 @@ jobs:
           fetch-depth: 0
 
       - name: Use Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: 20
-          registry-url: "https://npm.pkg.github.com"
-          scope: "@data2evidence"
+          node-version: "20.x"
 
       - name: Setup NPM
         if: ${{ matrix.NPM }}
-        run: npm install -g ${{ matrix.NPM }}
+        run: | 
+          npm install -g ${{ matrix.NPM }}
 
       - name: Install dependencies
         if: ${{ matrix.DESTPATH }}
         run: |
+          echo "@trex:registry=https://pkgs.dev.azure.com/data2evidence/d2e/_packaging/d2e/npm/registry" >> ~/.npmrc
           npm install -g deno@2.5.6
-          node ./install-deno-deps.js ${{ matrix.PKGPATH }}
+          cd ${{ matrix.PKGPATH }}
+          npm install
+          node ../../install-deno-deps.js .
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -116,9 +118,6 @@ jobs:
 
       - name: DEST
         working-directory: ${{ matrix.PKGPATH }}
-        if:  ${{ matrix.DESTPATH }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cp package.json package.org.json
           sudo mkdir -p ${{ matrix.DESTPATH }}
@@ -135,7 +134,7 @@ jobs:
           EOF
           
           # ---------------------------
-          # Install TREX CLI (correct one)
+          # Install TREX CLI
           # ---------------------------
           npm install @trex/cli
           export PATH="$(pwd)/node_modules/.bin:$PATH"
@@ -144,26 +143,26 @@ jobs:
           npm run trex_build
 
       - name: Use Node.js - OSS Develop
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         if: env.NPM_ARTIFACT_TYPE == 'OSS-develop'
         with:
-          node-version: 20
+          node-version: "20.x"
           registry-url: "https://pkgs.dev.azure.com/data2evidence/d2e/_packaging/d2e/npm/registry/"
           scope: "@data2evidence"
 
       - name: Use Node.js - OSS Release
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         if: env.NPM_ARTIFACT_TYPE == 'OSS-release'
         with:
-          node-version: 20
+          node-version: "20.x"
           registry-url: "https://pkgs.dev.azure.com/data2evidence/d2e/_packaging/stable/npm/registry/"
           scope: "@data2evidence"
 
       - name: Use Node.js - Project
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         if: env.NPM_ARTIFACT_TYPE == 'Project'
         with:
-          node-version: 20
+          node-version: "20.x"
           registry-url: "https://pkgs.dev.azure.com/data2evidence/d2e/_packaging/ms/npm/registry/"
           scope: "@data2evidence"
 
