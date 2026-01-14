@@ -1,5 +1,6 @@
 import { globalSchema, indexSearchParameterBundle, indexStructureDefinitionBundle } from '@medplum/core';
-import { readJson, SEARCH_PARAMETER_BUNDLE_FILES } from '@medplum/definitions';
+import { SEARCH_PARAMETER_BUNDLE_FILES } from '@medplum/definitions';
+import { readJson } from '../definitions/src/index';
 import { Bundle, BundleEntry, ResourceType, SearchParameter } from '@medplum/fhirtypes';
 import { AddressTable } from './lookups/address';
 import { HumanNameTable } from './lookups/humanname';

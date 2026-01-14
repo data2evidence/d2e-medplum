@@ -9,7 +9,8 @@ import {
   isResourceTypeSchema,
   SearchParameterType,
 } from '@medplum/core';
-import { readJson, SEARCH_PARAMETER_BUNDLE_FILES } from '@medplum/definitions';
+import { SEARCH_PARAMETER_BUNDLE_FILES } from '@medplum/definitions';
+import { readJson } from '../definitions/src/index';
 import { Bundle, ResourceType, SearchParameter } from '@medplum/fhirtypes';
 import { readdirSync, writeFileSync } from 'fs';
 import { resolve, dirname } from 'path';

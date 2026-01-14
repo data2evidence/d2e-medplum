@@ -1,5 +1,5 @@
 import { indexStructureDefinitionBundle } from '@medplum/core';
-import { readJson } from '@medplum/definitions';
+import { readJson } from '../../../definitions/src/index';
 import {
   Observation,
   OperationDefinition,

@@ -1,5 +1,6 @@
 import { indexSearchParameterBundle, indexStructureDefinitionBundle } from '@medplum/core';
-import { SEARCH_PARAMETER_BUNDLE_FILES, readJson } from '@medplum/definitions';
+import { SEARCH_PARAMETER_BUNDLE_FILES } from '@medplum/definitions';
+import { readJson } from '../definitions/src/index';
 import { Bundle, SearchParameter } from '@medplum/fhirtypes';
 
 let loaded = false;

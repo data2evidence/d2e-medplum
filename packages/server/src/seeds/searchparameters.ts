@@ -1,4 +1,5 @@
-import { SEARCH_PARAMETER_BUNDLE_FILES, readJson } from '@medplum/definitions';
+import { SEARCH_PARAMETER_BUNDLE_FILES } from '@medplum/definitions';
+import { readJson } from '../definitions/src/index';
 import { BundleEntry, SearchParameter } from '@medplum/fhirtypes';
 import { r4ProjectId } from '../constants';
 import { DatabaseMode } from '../database';

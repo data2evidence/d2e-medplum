@@ -1,5 +1,5 @@
 import { evalFhirPath, getReferenceString, getSearchParameter, WithId } from '@medplum/core';
-import { readJson } from '@medplum/definitions';
+import { readJson } from '../definitions/src/index';
 import {
   CompartmentDefinition,
   CompartmentDefinitionResource,
