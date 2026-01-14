@@ -101,13 +101,13 @@ jobs:
             jq --arg v "-$(date +%s)-$GITHUB_SHA" '.version+=$v' package.json > tmppkg; mv tmppkg package.json
           fi
 
-      - name: Build
-        run: |
-          cd ${{ matrix.PKGPATH }}
-          npm run build
-        env:
-          CI: ${{ matrix.NPM != 'yarn' }}
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Build
+      #   run: |
+      #     cd ${{ matrix.PKGPATH }}
+      #     npm run build
+      #   env:
+      #     CI: ${{ matrix.NPM != 'yarn' }}
+      #     NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Patch Package
         if: ${{ matrix.NPM }}
@@ -122,13 +122,6 @@ jobs:
           sudo chown runner:docker ${{ matrix.DESTPATH }}
           cp -a . ${{ matrix.DESTPATH }}
           cd ${{ matrix.DESTPATH }}
-          
-          # ---------------------------
-          # Install Deno and npm dependencies
-          # ---------------------------
-          export DENO_DIR="$HOME/.cache/deno"
-          node ${{ github.workspace }}/install-deno-deps.js .
-          npm install
           npm run trex_build
 
       - name: Use Node.js - OSS Develop
