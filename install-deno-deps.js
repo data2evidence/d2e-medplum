@@ -35,7 +35,7 @@ function installDependencies(folderPath, errorSummary) {
   try {
     console.log(`🔧 Installing dependencies for ${folderName}...`);
 
-    const entrypoint = fs.existsSync(path.join(folderPath, 'index.ts')) ? 'index.ts' : null;
+    const entrypoint = fs.existsSync(path.join(folderPath, '/src/index.ts')) ? 'src/index.ts' : null;
 
     if (entrypoint) {
       execSync(`deno cache ${entrypoint}`, {
