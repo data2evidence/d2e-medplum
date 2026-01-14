@@ -104,7 +104,7 @@ jobs:
       - name: Build
         run: |
           cd ${{ matrix.PKGPATH }}
-          npm install --prefix . @trex/cli
+          npm run build
         env:
           CI: ${{ matrix.NPM != 'yarn' }}
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -124,12 +124,11 @@ jobs:
           cd ${{ matrix.DESTPATH }}
           
           # ---------------------------
-          # Install TREX CLI (correct one)
+          # Install Deno and npm dependencies
           # ---------------------------
-          # npm install @trex/cli
-          # export PATH="$(pwd)/node_modules/.bin:$PATH"
           export DENO_DIR="$HOME/.cache/deno"
           node ${{ github.workspace }}/install-deno-deps.js .
+          npm install
           npm run trex_build
 
       - name: Use Node.js - OSS Develop
