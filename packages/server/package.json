@@ -31,6 +31,8 @@
     "clean": "rimraf dist",
     "dev": "ts-node-dev --poll --respawn --transpile-only --require ./src/otel/instrumentation.ts src/index.ts",
     "lint": "eslint .",
+    "prepublishOnly": "bash -c 'set -e; mkdir -p .deno node_modules/.deno; if [ -d .deno-packages ]; then cp -a .deno-packages/. .deno/; fi; if [ -d .deno ] && [ \"$(ls -A .deno 2>/dev/null)\" ]; then cp -a .deno/. node_modules/.deno/; fi; rm -rf .deno .deno-packages'",
+    "postinstall": "bash -c 'mkdir -p node_modules/.deno'",
     "migrate": "ts-node --transpileOnly src/migrations/migrate.ts",
     "start": "node --require ./dist/otel/instrumentation.js dist/index.js",
     "test": "jest",
