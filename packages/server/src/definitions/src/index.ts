@@ -1,6 +1,8 @@
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { resolve, dirname } from 'path';
+//@ts-ignore
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export function readJson(filename: string): any {
   let baseDir: string = "";

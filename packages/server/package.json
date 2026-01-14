@@ -39,6 +39,7 @@
     "test:seed": "jest seed.test.ts --testTimeout=400000",
     "trex_build": "tbuild ."
   },
+  "bundleDependencies":true,
   "dependencies": {
     "@aws-sdk/client-cloudwatch-logs": "3.849.0",
     "@aws-sdk/client-comprehendmedical": "3.848.0",

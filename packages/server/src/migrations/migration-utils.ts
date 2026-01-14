@@ -17,7 +17,8 @@ import { PostDeployMigration } from './data/types';
 import { getPostDeployMigrationVersions, MigrationVersion } from './migration-versions';
 import * as preDeployMigrations from './schema';
 import { PreDeployMigration } from './schema/types';
-
+//@ts-ignore
+const __dirname = dirname(fileURLToPath(import.meta.url));
 /**
  * Gets the next post-deploy migration that needs to be run.
  * Returns `MigrationVersion.NONE` if there are no pending migrations, or `MigrationVersion.UNKNOWN`

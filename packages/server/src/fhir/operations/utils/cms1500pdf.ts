@@ -95,6 +95,8 @@ export async function getClaimPDFDocDefinition(claim: Claim): Promise<TDocumentD
 
   const taxIdentifier = insurer.identifier?.find((id) => id.type?.coding?.find((code) => code.code === 'TAX'));
   let baseDir: string = "";
+  //@ts-ignore
+  const __dirname = dirname(fileURLToPath(import.meta.url));
   if (typeof __dirname !== 'undefined') {
     baseDir = __dirname;
     //@ts-ignore

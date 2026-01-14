@@ -10,7 +10,8 @@ import { MedplumServerConfig } from './types';
 import { addDefaults, isBooleanConfig, isFloatConfig, isIntegerConfig, isObjectConfig, ServerConfig } from './utils';
 
 let cachedConfig: ServerConfig | undefined = undefined;
-
+//@ts-ignore
+const __dirname = dirname(fileURLToPath(import.meta.url));
 /**
  * Returns the server configuration settings.
  * @returns The server configuration settings.

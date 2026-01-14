@@ -36,10 +36,14 @@ import {
   TableDefinition,
 } from './types';
 import { fileURLToPath } from 'node:url';
+import { globalLogger } from '../logger';
+//@ts-ignore
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 let baseDir: string = "";
 if (typeof __dirname !== 'undefined') {
   baseDir = __dirname;
+  globalLogger.info('BaseDir set to __dirname: ' + baseDir);
   //@ts-ignore
 } else if (typeof import.meta !== 'undefined') {
   //@ts-ignore
