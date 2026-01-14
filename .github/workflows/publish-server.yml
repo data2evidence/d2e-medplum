@@ -102,8 +102,8 @@ jobs:
       - name: Build
         run: |
           cd ${{ matrix.PKGPATH }}
+          echo "@trex:registry=https://pkgs.dev.azure.com/data2evidence/d2e/_packaging/d2e/npm/registry" >> ~/.npmrc
           npm install --prefix . @trex/cli
-
         env:
           CI: ${{ matrix.NPM != 'yarn' }}
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
