@@ -471,7 +471,7 @@
     "./src/workers/subscription": "./src/workers/subscription.ts",
     "./src/workers/utils": "./src/workers/utils.ts",
     "./src/definitions/src/index": "./src/definitions/src/index.ts",
-    "./src/definitions/dist/fhir/r4/profiles-types.json": "./src/definitions/dist/fhir/r4/profiles-types.json"
+    "/var/tmp/sb-compile-trex/d2e-fhir-server/src/definitions/dist/fhir/r4/profiles-types.json": "./src/definitions/dist/fhir/r4/profiles-types.json"
   },
   "unstable": ["sloppy-imports", "node-globals", "detect-cjs"]
 }
