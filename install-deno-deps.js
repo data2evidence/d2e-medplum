@@ -28,7 +28,9 @@ function installDependencies(folderPath, errorSummary) {
   }
 
   const nodeModulesPath = path.join(folderPath, 'node_modules');
-  if (fs.existsSync(nodeModulesPath)) {
+  const isRootFolder = folderName === '';
+  
+  if (!isRootFolder && fs.existsSync(nodeModulesPath)) {
     fs.rmSync(nodeModulesPath, { recursive: true, force: true });
   }
 
