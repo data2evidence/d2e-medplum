@@ -122,14 +122,15 @@ jobs:
           sudo chown runner:docker ${{ matrix.DESTPATH }}
           cp -a . ${{ matrix.DESTPATH }}
           cd ${{ matrix.DESTPATH }}
-          npm install @trex/cli
+          # echo "@trex:registry=https://pkgs.dev.azure.com/data2evidence/d2e/_packaging/d2e/npm/registry" >> ~/.npmrc
+          # npm install @trex/cli
           
-          echo "=== Folder structure ==="
-          ls -la
-          echo "=== @trex/cli location ==="
-          find node_modules -name "@trex" -type d 2>/dev/null || echo "Not found in node_modules"
-          echo "=== node_modules/.bin contents ==="
-          ls -la node_modules/.bin/ | grep -i trex || echo "No trex-related binaries"
+          # echo "=== Folder structure ==="
+          # ls -la
+          # echo "=== @trex/cli location ==="
+          # find node_modules -name "@trex" -type d 2>/dev/null || echo "Not found in node_modules"
+          # echo "=== node_modules/.bin contents ==="
+          # ls -la node_modules/.bin/ | grep -i trex || echo "No trex-related binaries"
           
           npm run trex_build
 
