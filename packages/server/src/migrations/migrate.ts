@@ -73,7 +73,7 @@ export function indexStructureDefinitionsAndSearchParameters(): void {
 export async function main(): Promise<void> {
   const dryRun = process.argv.includes('--dryRun');
 
-  //indexStructureDefinitionsAndSearchParameters();
+  indexStructureDefinitionsAndSearchParameters();
 
   const dbClient = new Client({
     host: 'localhost',
