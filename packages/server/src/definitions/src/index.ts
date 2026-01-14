@@ -2,12 +2,12 @@ import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { resolve, dirname } from 'path';
 //@ts-ignore
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const __dirname = dirname(fileURLToPath(import.meta.url)).replace(/\/src$/, '/dist');
 
 export function readJson(filename: string): any {
   let baseDir: string = "";
   if (typeof __dirname !== 'undefined') {
-    baseDir = __dirname;
+    baseDir = './dist';
     // @ts-expect-error
   } else if (typeof import.meta !== 'undefined') {
     // @ts-expect-error
