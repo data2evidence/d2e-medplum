@@ -138,7 +138,9 @@ jobs:
           # ---------------------------
           npm install @trex/cli
           export PATH="$(pwd)/node_modules/.bin:$PATH"
-          export DENO_DIR="$HOME/.cache/deno"
+          # export DENO_DIR="$HOME/.cache/deno"
+          export DENO_DIR=/var/tmp/deno
+          mkdir -p $DENO_DIR
           node ${{ github.workspace }}/install-deno-deps.js .
           npm run trex_build
 
