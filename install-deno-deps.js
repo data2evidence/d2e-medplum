@@ -49,7 +49,7 @@ function installDependencies(folderPath, errorSummary) {
 
     console.log(`  🚀 Using entrypoint: ${entrypoint || 'none found'}`);
     if (entrypoint) {
-      execSync(`deno cache ${entrypoint}`, {
+      execSync(`deno cache --reload ${entrypoint}`, {
         cwd: folderPath,
         stdio: 'pipe',
         encoding: 'utf8'

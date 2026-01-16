@@ -12,3 +12,4 @@
 !README.md
 !babel.config.json
 !medplum.config.json
+!dist/**
