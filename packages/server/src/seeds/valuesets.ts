@@ -1,5 +1,5 @@
 import { Operator, WithId } from '@medplum/core';
-import { readJson } from '../definitions/src/index';
+import { readJson } from '@medplum/definitions';
 import { Bundle, BundleEntry, CodeSystem, ValueSet } from '@medplum/fhirtypes';
 import { r4ProjectId } from '../constants';
 import { Repository } from '../fhir/repo';

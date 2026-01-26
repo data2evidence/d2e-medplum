@@ -1,5 +1,5 @@
 import { checkForNull, createStructureIssue, OperationOutcomeError, validationError } from '@medplum/core';
-import { readJson } from '../definitions/src/index';
+import { readJson } from '@medplum/definitions';
 import { OperationOutcomeIssue, Resource } from '@medplum/fhirtypes';
 import { randomUUID } from 'crypto';
 import { JSONSchema4, JSONSchema6 } from 'json-schema';

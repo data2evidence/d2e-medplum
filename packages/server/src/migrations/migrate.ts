@@ -10,7 +10,6 @@ import {
   SearchParameterType,
 } from '@medplum/core';
 import { readJson, SEARCH_PARAMETER_BUNDLE_FILES } from '@medplum/definitions';
-// import { readJson } from '../definitions/src/index';
 import { Bundle, ResourceType, SearchParameter } from '@medplum/fhirtypes';
 import { readdirSync, writeFileSync } from 'fs';
 import { resolve, dirname } from 'path';
@@ -37,8 +36,6 @@ import {
 } from './types';
 import { fileURLToPath } from 'node:url';
 import { globalLogger } from '../logger';
-//@ts-ignore
-const __dirname = dirname(fileURLToPath(import.meta.url));
 
 let baseDir: string = "";
 if (typeof __dirname !== 'undefined') {

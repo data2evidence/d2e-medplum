@@ -50,8 +50,6 @@ import { getRepoForLogin } from './accesspolicy';
 import { getSystemRepo, Repository, setTypedPropertyValue } from './repo';
 import { SelectQuery } from './sql';
 import { fileURLToPath } from 'url';
-//@ts-ignore
-const __dirname = dirname(fileURLToPath(import.meta.url));
 
 jest.mock('hibp');
 
