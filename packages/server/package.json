@@ -189,7 +189,7 @@
       },
       "scopes": [
         {
-          "path": "^/fhir-server/(.*)",
+          "path": "^/d2e/fhir-server/(.*)",
           "scopes": [
             "fhir.server.admin"
           ],

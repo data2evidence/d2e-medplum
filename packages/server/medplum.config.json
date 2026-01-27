@@ -1,7 +1,7 @@
 {
   "port": 33001,
   "baseUrl": "${FHIR_SERVER_BASE_URL}",
-  "issuer": "${FHIR_SERVER_BASE_URL}/fhir-server",
+  "issuer": "${FHIR_SERVER_BASE_URL}/d2e/fhir-server",
   "audience": "${FHIR_SERVER_BASE_URL}",
   "jwksUrl": "${FHIR_SERVER_BASE_URL}/.well-known/jwks.json",
   "authorizeUrl": "${FHIR_SERVER_BASE_URL}/oauth2/authorize",
