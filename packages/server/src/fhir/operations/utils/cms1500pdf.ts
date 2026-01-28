@@ -8,7 +8,7 @@ import {
 } from '@medplum/core';
 import { Address, Claim, HumanName, Practitioner, RelatedPerson } from '@medplum/fhirtypes';
 import path, { dirname } from 'path';
-import { Content, TDocumentDefinitions } from 'pdfmake/interfaces';
+// import { Content, TDocumentDefinitions } from 'pdfmake/interfaces';
 import { getAuthenticatedContext } from '../../../context';
 import { fileURLToPath } from 'url';
 
@@ -29,7 +29,7 @@ const insuranceTypes = new Set<string>([
  * @param claim - The Claim resource.
  * @returns The PDF document definition.
  */
-export async function getClaimPDFDocDefinition(claim: Claim): Promise<TDocumentDefinitions> {
+export async function getClaimPDFDocDefinition(claim: Claim): Promise<any> {
   // Fetch all referenced resources
   const { repo } = getAuthenticatedContext();
 
@@ -102,7 +102,7 @@ export async function getClaimPDFDocDefinition(claim: Claim): Promise<TDocumentD
     //@ts-ignore
     baseDir = dirname(fileURLToPath(import.meta.url));
   }
-  const docDefinition: TDocumentDefinitions = {
+  const docDefinition: any = {
     defaultStyle: {
       font: 'Helvetica',
       fontSize: 8,
@@ -308,12 +308,12 @@ export async function getClaimPDFDocDefinition(claim: Claim): Promise<TDocumentD
       createText(provider?.identifier?.find((i) => i.system === `${HTTP_HL7_ORG}/fhir/sid/us-npi`)?.value, 380, 745),
     ]
       .flat()
-      .filter(Boolean) as Content[],
+      .filter(Boolean) as any[],
   };
   return docDefinition;
 }
 
-function createText(text: string | undefined, x: number, y: number): Content | undefined {
+function createText(text: string | undefined, x: number, y: number): any | undefined {
   if (!text) {
     return undefined;
   }
@@ -323,11 +323,11 @@ function createText(text: string | undefined, x: number, y: number): Content | u
   };
 }
 
-function createCheckmark(checked: boolean, x: number, y: number): Content | undefined {
+function createCheckmark(checked: boolean, x: number, y: number): any | undefined {
   return createText(checked ? 'X' : '', x, y);
 }
 
-function createDate(date: string | undefined, x: number, y: number): (Content | undefined)[] | undefined {
+function createDate(date: string | undefined, x: number, y: number): (any | undefined)[] | undefined {
   return [
     createText(date?.substring(5, 7), x, y),
     createText(date?.substring(8, 10), x + 21, y),

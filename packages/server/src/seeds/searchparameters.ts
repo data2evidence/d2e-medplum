@@ -1,9 +1,12 @@
-import { SEARCH_PARAMETER_BUNDLE_FILES, readJson } from '@medplum/definitions';
-import { BundleEntry, SearchParameter } from '@medplum/fhirtypes';
+// import { readJson, SEARCH_PARAMETER_BUNDLE_FILES } from '@medplum/definitions';
+import { Bundle, BundleEntry, SearchParameter } from '@medplum/fhirtypes';
 import { r4ProjectId } from '../constants';
 import { DatabaseMode } from '../database';
 import { Repository } from '../fhir/repo';
 import { globalLogger } from '../logger';
+import searchParameters from "@medplum/definitions/dist/fhir/r4/search-parameters.json" assert { type: "json" };
+import searchParametersMedplum from "@medplum/definitions/dist/fhir/r4/search-parameters-medplum.json" assert { type: "json" };
+import searchParametersUSCore from "@medplum/definitions/dist/fhir/r4/search-parameters-uscore.json" assert { type: "json" };
 
 /**
  * Creates all SearchParameter resources.
@@ -12,9 +15,14 @@ import { globalLogger } from '../logger';
 export async function rebuildR4SearchParameters(systemRepo: Repository): Promise<void> {
   const client = systemRepo.getDatabaseClient(DatabaseMode.WRITER);
   await client.query('DELETE FROM "SearchParameter" WHERE "projectId" = $1', [r4ProjectId]);
+  const SEARCH_PARAMETER_BUNDLE_FILES = [
+    searchParameters as Bundle<SearchParameter>,
+    searchParametersMedplum as Bundle<SearchParameter>,
+    searchParametersUSCore as Bundle<SearchParameter>,
+  ];
 
   for (const filename of SEARCH_PARAMETER_BUNDLE_FILES) {
-    for (const entry of readJson(filename).entry as BundleEntry[]) {
+    for (const entry of filename.entry as BundleEntry[]) {
       await createParameter(systemRepo, entry.resource as SearchParameter);
     }
   }

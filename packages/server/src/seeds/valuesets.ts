@@ -1,5 +1,11 @@
 import { Operator, WithId } from '@medplum/core';
-import { readJson } from '@medplum/definitions';
+// import { readJson } from '@medplum/definitions';
+import v2Tables from "@medplum/definitions/dist/fhir/r4/v2-tables.json" assert { type: "json" };
+import v3CodeSystems from "@medplum/definitions/dist/fhir/r4/v3-codesystems.json" assert { type: "json" };
+import valuesets from "@medplum/definitions/dist/fhir/r4/valuesets.json" assert { type: "json" };
+import valuesetsMedplum from "@medplum/definitions/dist/fhir/r4/valuesets-medplum.json" assert { type: "json" };
+import valuesetsMedplumGenerated from "@medplum/definitions/dist/fhir/r4/valuesets-medplum-generated.json" assert { type: "json" };
+
 import { Bundle, BundleEntry, CodeSystem, ValueSet } from '@medplum/fhirtypes';
 import { r4ProjectId } from '../constants';
 import { Repository } from '../fhir/repo';
@@ -10,14 +16,14 @@ import { Repository } from '../fhir/repo';
  */
 export async function rebuildR4ValueSets(systemRepo: Repository): Promise<void> {
   const files = [
-    'v2-tables.json',
-    'v3-codesystems.json',
-    'valuesets.json',
-    'valuesets-medplum.json',
-    'valuesets-medplum-generated.json',
+    v2Tables,
+    v3CodeSystems,
+    valuesets,
+    valuesetsMedplum,
+    valuesetsMedplumGenerated,
   ];
   for (const file of files) {
-    const bundle = readJson('fhir/r4/' + file) as Bundle<CodeSystem | ValueSet>;
+    const bundle = file as Bundle<CodeSystem | ValueSet>;
     for (const entry of bundle.entry as BundleEntry<CodeSystem | ValueSet>[]) {
       const resource = entry.resource as CodeSystem | ValueSet;
       await deleteExisting(systemRepo, resource, r4ProjectId);

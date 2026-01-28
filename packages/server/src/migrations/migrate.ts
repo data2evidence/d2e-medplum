@@ -9,7 +9,13 @@ import {
   isResourceTypeSchema,
   SearchParameterType,
 } from '@medplum/core';
-import { readJson, SEARCH_PARAMETER_BUNDLE_FILES } from '@medplum/definitions';
+// import { readJson, SEARCH_PARAMETER_BUNDLE_FILES } from '@medplum/definitions';
+import profiles from "@medplum/definitions/dist/fhir/r4/profiles-types.json" assert { type: "json" };
+import profilesResources from "@medplum/definitions/dist/fhir/r4/profiles-resources.json" assert { type: "json" };
+import profilesMedplum from "@medplum/definitions/dist/fhir/r4/profiles-medplum.json" assert { type: "json" };
+import searchParameters from "@medplum/definitions/dist/fhir/r4/search-parameters.json" assert { type: "json" };
+import searchParametersMedplum from "@medplum/definitions/dist/fhir/r4/search-parameters-medplum.json" assert { type: "json" };
+import searchParametersUSCore from "@medplum/definitions/dist/fhir/r4/search-parameters-uscore.json" assert { type: "json" };
 import { Bundle, ResourceType, SearchParameter } from '@medplum/fhirtypes';
 import { readdirSync, writeFileSync } from 'fs';
 import { resolve, dirname } from 'path';
@@ -45,22 +51,26 @@ if (typeof __dirname !== 'undefined') {
   baseDir = dirname(fileURLToPath(import.meta.url));
 }
 const SCHEMA_DIR = resolve(baseDir, 'schema');
+export const SEARCH_PARAMETER_BUNDLE_FILES = [
+  searchParameters as Bundle<SearchParameter>,
+  searchParametersMedplum as Bundle<SearchParameter>,
+  searchParametersUSCore as Bundle<SearchParameter>,
+];
 
 // Custom SQL functions should be avoided unless absolutely necessary.
 // Do not add any functions to this list unless you have a really good reason for doing so.
 const TargetFunctions: SqlFunctionDefinition[] = [TokenArrayToTextFn];
 
 export function indexStructureDefinitionsAndSearchParameters(): void {
-  indexStructureDefinitionBundle(readJson('fhir/r4/profiles-types.json') as Bundle);
-  indexStructureDefinitionBundle(readJson('fhir/r4/profiles-resources.json') as Bundle);
-  indexStructureDefinitionBundle(readJson('fhir/r4/profiles-medplum.json') as Bundle);
+  indexStructureDefinitionBundle(profiles as Bundle);
+  indexStructureDefinitionBundle(profilesResources as Bundle);
+  indexStructureDefinitionBundle(profilesMedplum as Bundle);
 
-  for (const filename of SEARCH_PARAMETER_BUNDLE_FILES) {
-    const bundle = readJson(filename) as Bundle<SearchParameter>;
+  for (const bundle of SEARCH_PARAMETER_BUNDLE_FILES) {
     indexSearchParameterBundle(bundle);
 
     if (!isPopulated(bundle.entry)) {
-      throw new Error('Empty search parameter bundle: ' + filename);
+      throw new Error('Empty search parameter bundle: ' + bundle);
     }
   }
 }
