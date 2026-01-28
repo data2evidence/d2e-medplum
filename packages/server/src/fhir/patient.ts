@@ -8,6 +8,7 @@ import {
   Resource,
   ResourceType,
 } from '@medplum/fhirtypes';
+// @ts-expect-error
 import compartmentDefinitionPatient from "@medplum/definitions/dist/fhir/r4/compartmentdefinition-patient.json" assert { type: "json" };
 
 /**

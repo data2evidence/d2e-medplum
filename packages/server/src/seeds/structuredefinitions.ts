@@ -4,8 +4,11 @@ import { r4ProjectId } from '../constants';
 import { DatabaseMode } from '../database';
 import { Repository } from '../fhir/repo';
 import { globalLogger } from '../logger';
+// @ts-expect-error
 import profiles from "@medplum/definitions/dist/fhir/r4/profiles-types.json" assert { type: "json" };
+// @ts-expect-error
 import profilesResources from "@medplum/definitions/dist/fhir/r4/profiles-resources.json" assert { type: "json" };
+// @ts-expect-error
 import profilesMedplum from "@medplum/definitions/dist/fhir/r4/profiles-medplum.json" assert { type: "json" };
 
 /**

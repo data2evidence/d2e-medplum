@@ -1,9 +1,14 @@
 import { Operator, WithId } from '@medplum/core';
 // import { readJson } from '@medplum/definitions';
+// @ts-expect-error
 import v2Tables from "@medplum/definitions/dist/fhir/r4/v2-tables.json" assert { type: "json" };
+// @ts-expect-error
 import v3CodeSystems from "@medplum/definitions/dist/fhir/r4/v3-codesystems.json" assert { type: "json" };
+// @ts-expect-error
 import valuesets from "@medplum/definitions/dist/fhir/r4/valuesets.json" assert { type: "json" };
+// @ts-expect-error
 import valuesetsMedplum from "@medplum/definitions/dist/fhir/r4/valuesets-medplum.json" assert { type: "json" };
+// @ts-expect-error
 import valuesetsMedplumGenerated from "@medplum/definitions/dist/fhir/r4/valuesets-medplum-generated.json" assert { type: "json" };
 
 import { Bundle, BundleEntry, CodeSystem, ValueSet } from '@medplum/fhirtypes';

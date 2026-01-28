@@ -1,6 +1,7 @@
 import { OperationOutcomeError, serverError } from '@medplum/core';
 // import { readJson } from '@medplum/definitions';
 import { Bundle, OperationDefinition, ResourceType, StructureDefinition } from '@medplum/fhirtypes';
+// @ts-expect-error
 import profilesResources from "@medplum/definitions/dist/fhir/r4/profiles-resources.json" assert { type: "json" };
 
 const operationDefinitions = (

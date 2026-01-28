@@ -3,6 +3,7 @@ import { checkForNull, createStructureIssue, OperationOutcomeError, validationEr
 import { OperationOutcomeIssue, Resource } from '@medplum/fhirtypes';
 import { randomUUID } from 'crypto';
 import { JSONSchema4, JSONSchema6 } from 'json-schema';
+// @ts-expect-error
 import fhirSchema from "@medplum/definitions/dist/fhir/r4/fhir.schema.json" assert { type: "json" };
 
 /*

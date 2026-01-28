@@ -1,8 +1,6 @@
 // import PdfPrinter from 'pdfmake';
 // import { CustomTableLayout, TDocumentDefinitions, TFontDictionary } from 'pdfmake/interfaces';
 import { Buffer } from 'buffer';
-import { any } from 'zod';
-
 /**
  * Generates a PDF buffer from a document definition.
  *
@@ -17,14 +15,14 @@ export function createPdf(
   fonts?: any
 ): Promise<Buffer> {
   return new Promise((resolve, reject) => {
-    const defaultFonts: any = {
-      Helvetica: {
-        normal: 'Helvetica',
-        bold: 'Helvetica-Bold',
-        italics: 'Helvetica-Oblique',
-        bolditalics: 'Helvetica-BoldOblique',
-      },
-    };
+    // const defaultFonts: any = {
+    //   Helvetica: {
+    //     normal: 'Helvetica',
+    //     bold: 'Helvetica-Bold',
+    //     italics: 'Helvetica-Oblique',
+    //     bolditalics: 'Helvetica-BoldOblique',
+    //   },
+    // };
     // // const printer = new PdfPrinter(fonts ?? defaultFonts);
     // // const pdfDoc = printer.createPdfKitDocument(docDefinition, { tableLayouts });
     // const chunks: Uint8Array[] = [];
