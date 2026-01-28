@@ -17,6 +17,7 @@
   "files": [
     "src",
     "static",
+    "dist/**",
     "node_modules/.deno",
     "node_modules/.deno/**",
     "deno.json",
@@ -25,13 +26,14 @@
     "medplum.config.json",
     "README.md"
   ],
-  "bundleDependencies": true,
   "scripts": {
     "build": "npm run clean && tsc && tsc --project tsconfig.build.json",
     "circular": "npx madge --circular dist/index.js",
     "clean": "rimraf dist",
     "dev": "ts-node-dev --poll --respawn --transpile-only --require ./src/otel/instrumentation.ts src/index.ts",
     "lint": "eslint .",
+    "prepublishOnly": "bash -c 'set -e; mkdir -p .deno node_modules/.deno; if [ -d .deno-packages ]; then cp -a .deno-packages/. .deno/; fi; if [ -d .deno ] && [ \"$(ls -A .deno 2>/dev/null)\" ]; then cp -a .deno/. node_modules/.deno/; fi; rm -rf .deno .deno-packages'",
+    "postinstall": "bash -c 'mkdir -p node_modules/.deno'",
     "migrate": "ts-node --transpileOnly src/migrations/migrate.ts",
     "prepublishOnly": "bash -c 'set -e; mkdir -p .deno node_modules/.deno; if [ -d .deno-packages ]; then cp -a .deno-packages/. .deno/; fi; if [ -d .deno ] && [ \"$(ls -A .deno 2>/dev/null)\" ]; then cp -a .deno/. node_modules/.deno/; fi; rm -rf .deno .deno-packages'",
     "postinstall": "bash -c 'mkdir -p node_modules/.deno'",
@@ -40,6 +42,7 @@
     "test:seed": "jest seed.test.ts --testTimeout=400000",
     "trex_build": "tbuild ."
   },
+  "bundleDependencies":true,
   "dependencies": {
     "@aws-sdk/client-cloudwatch-logs": "3.849.0",
     "@aws-sdk/client-comprehendmedical": "3.848.0",
@@ -107,6 +110,7 @@
     "zod": "3.25.76"
   },
   "devDependencies": {
+    "@trex/cli": "latest",
     "@jest/test-sequencer": "29.7.0",
     "@medplum/fhirtypes": "4.3.5",
     "@types/body-parser": "1.19.6",
