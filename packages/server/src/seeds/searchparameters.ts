@@ -5,11 +5,11 @@ import { DatabaseMode } from '../database';
 import { Repository } from '../fhir/repo';
 import { globalLogger } from '../logger';
 // @ts-expect-error
-import searchParameters from "@medplum/definitions/dist/fhir/r4/search-parameters.json" assert { type: "json" };
+import searchParameters from "@medplum/definitions/dist/fhir/r4/search-parameters.json" with { type: "json" };
 // @ts-expect-error
-import searchParametersMedplum from "@medplum/definitions/dist/fhir/r4/search-parameters-medplum.json" assert { type: "json" };
+import searchParametersMedplum from "@medplum/definitions/dist/fhir/r4/search-parameters-medplum.json" with { type: "json" };
 // @ts-expect-error
-import searchParametersUSCore from "@medplum/definitions/dist/fhir/r4/search-parameters-uscore.json" assert { type: "json" };
+import searchParametersUSCore from "@medplum/definitions/dist/fhir/r4/search-parameters-uscore.json" with { type: "json" };
 
 /**
  * Creates all SearchParameter resources.
