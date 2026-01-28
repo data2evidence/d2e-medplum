@@ -18,11 +18,12 @@
     "npm:@azure/storage-blob@12.28.0": "12.28.0",
     "npm:@jest/test-sequencer@29.7.0": "29.7.0",
     "npm:@kubernetes/client-node@1.3.0": "1.3.0_ws@8.18.3",
-    "npm:@medplum/ccda@4.3.5": "4.3.5",
-    "npm:@medplum/core@4.3.5": "4.3.5",
-    "npm:@medplum/definitions@4.3.5": "4.3.5",
-    "npm:@medplum/fhir-router@4.3.5": "4.3.5",
+    "npm:@medplum/ccda@4.3.6": "4.3.6",
+    "npm:@medplum/core@4.3.6": "4.3.6",
+    "npm:@medplum/definitions@4.3.6": "4.3.6",
+    "npm:@medplum/fhir-router@4.3.6": "4.3.6",
     "npm:@medplum/fhirtypes@4.3.5": "4.3.5",
+    "npm:@medplum/fhirtypes@4.3.6": "4.3.6",
     "npm:@modelcontextprotocol/sdk@1.17.0": "1.17.0_express@5.2.1_zod@3.25.76",
     "npm:@opentelemetry/api@1.0.4": "1.0.4",
     "npm:@opentelemetry/exporter-metrics-otlp-proto@0.57.2": "0.57.2_@opentelemetry+api@1.0.4",
@@ -1358,25 +1359,25 @@
         "ws"
       ]
     },
-    "@medplum/ccda@4.3.5": {
-      "integrity": "sha512-b/OiYg1bSI4on8DpF/GFLmEJe7o+FH1pMsosDFcSDfmITSqg9tJL78hC/GQDMsGSsm21I9iQCHbIY3AZCWqA3w==",
+    "@medplum/ccda@4.3.6": {
+      "integrity": "sha512-lV00MX0oOMzk/Qm98FbBM6zVzkEOUXskMPHMrc1UAwxOKQOxrtVJpBqq/WjVBtojuehXR9CgnWvZbKpfyJacMg==",
       "dependencies": [
         "@medplum/core",
         "fast-xml-parser"
       ]
     },
-    "@medplum/core@4.3.5": {
-      "integrity": "sha512-hw7jWoKGpWu90m7PO5LGH2pxqR9BlVIq/nEHxJ5ZAWf0lCyfJ5hgM0gKuYAAXXlt5AFHOLp+VjWYuL8ysWZweg=="
+    "@medplum/core@4.3.6": {
+      "integrity": "sha512-GHKRoxiJ36Hfn2mOVTicVsHcayG9kBoKAL8AJoJYARzeUQjNTmkO7WgGyxxb7GH6j4t1DQBVVi3MWKoSD/RNqg=="
     },
-    "@medplum/definitions@4.3.5": {
-      "integrity": "sha512-1tABAWUlb5mz6q/AVR4qdkl7gM4i28NCRUJ+SNTXwZ9fQHm3VgrkHQSXKBYvFS1v7mvJB/BpyJGDdPOVPHGJXQ=="
+    "@medplum/definitions@4.3.6": {
+      "integrity": "sha512-MaFYdbj7dhw7LN0S56e1tsfoNQL6v5RMgQEsEc8xM2X3LMoHgkIciif9ds8OmsdEJggROP6Yszf1JExakOXa7g=="
     },
-    "@medplum/fhir-router@4.3.5": {
-      "integrity": "sha512-Ahn6mdYnidjQz9nDc1aJpj+IH2L06thxlkuk+2H3By38ZYpOEnWP8F4UYTTxVsEMo7d+zgLTuupAsd6o7dbbtw==",
+    "@medplum/fhir-router@4.3.6": {
+      "integrity": "sha512-8BgVk3HwUey4InopxlVH9b/dou6fngUgWnxYLFDO7v67JsG4zgHerDHk9PsCYFqrrsoFQBiFf9J5vkMHFdZkIw==",
       "dependencies": [
         "@medplum/core",
         "@medplum/definitions",
-        "@medplum/fhirtypes",
+        "@medplum/fhirtypes@4.3.6",
         "dataloader",
         "graphql",
         "rfc6902"
@@ -1384,6 +1385,9 @@
     },
     "@medplum/fhirtypes@4.3.5": {
       "integrity": "sha512-OFPBnqz1r/HIAI89kR0J7h74M1YBuJzU/ukRZ10Kchoi4BGKGR9djUyOugZQDvfAfdt+qi/dwmzm+kpb+augsA=="
+    },
+    "@medplum/fhirtypes@4.3.6": {
+      "integrity": "sha512-Onu228eduwf8NUEBtRwDBzzUVVbi1vHLMawlQeToHuc+JmYlW7Fbdw6bdosiE8S8z8J9jNugmjrZHlzsAxmP+A=="
     },
     "@modelcontextprotocol/sdk@1.17.0_express@5.2.1_zod@3.25.76": {
       "integrity": "sha512-qFfbWFA7r1Sd8D697L7GkTd36yqDuTkvz0KfOGkgXR8EUhQn3/EDNIR/qUdQNMT8IjmasBvHWuXeisxtXTQT2g==",
@@ -5120,10 +5124,10 @@
       "npm:@azure/storage-blob@12.28.0",
       "npm:@jest/test-sequencer@29.7.0",
       "npm:@kubernetes/client-node@1.3.0",
-      "npm:@medplum/ccda@4.3.5",
-      "npm:@medplum/core@4.3.5",
-      "npm:@medplum/definitions@4.3.5",
-      "npm:@medplum/fhir-router@4.3.5",
+      "npm:@medplum/ccda@4.3.6",
+      "npm:@medplum/core@4.3.6",
+      "npm:@medplum/definitions@4.3.6",
+      "npm:@medplum/fhir-router@4.3.6",
       "npm:@medplum/fhirtypes@4.3.5",
       "npm:@modelcontextprotocol/sdk@1.17.0",
       "npm:@opentelemetry/api@1.0.4",
@@ -5217,11 +5221,11 @@
         "npm:@azure/storage-blob@12.28.0",
         "npm:@jest/test-sequencer@29.7.0",
         "npm:@kubernetes/client-node@1.3.0",
-        "npm:@medplum/ccda@4.3.5",
-        "npm:@medplum/core@4.3.5",
-        "npm:@medplum/definitions@4.3.5",
-        "npm:@medplum/fhir-router@4.3.5",
-        "npm:@medplum/fhirtypes@4.3.5",
+        "npm:@medplum/ccda@4.3.6",
+        "npm:@medplum/core@4.3.6",
+        "npm:@medplum/definitions@4.3.6",
+        "npm:@medplum/fhir-router@4.3.6",
+        "npm:@medplum/fhirtypes@4.3.6",
         "npm:@modelcontextprotocol/sdk@1.17.0",
         "npm:@opentelemetry/exporter-metrics-otlp-proto@0.57.2",
         "npm:@opentelemetry/exporter-trace-otlp-proto@0.57.2",
