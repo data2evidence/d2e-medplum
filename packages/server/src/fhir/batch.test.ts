@@ -13,7 +13,7 @@ import {
   RelatedPerson,
   Task,
 } from '@medplum/fhirtypes';
-import { Job } from 'bullmq';
+// import { Job } from 'bullmq';
 import { randomUUID } from 'crypto';
 import express from 'express';
 import request from 'supertest';
@@ -1025,7 +1025,7 @@ describe('Batch and Transaction processing', () => {
       })
     );
 
-    const job = { id: 1, data: queue.add.mock.calls[0][1] } as unknown as Job;
+    const job = { id: 1, data: queue.add.mock.calls[0][1] } as unknown as any;
     queue.add.mockClear();
 
     await expect(execBatchJob(job)).resolves.toBe(undefined);
@@ -1076,7 +1076,7 @@ describe('Batch and Transaction processing', () => {
       })
     );
 
-    const job = { id: 1, data: queue.add.mock.calls[0][1] } as unknown as Job;
+    const job = { id: 1, data: queue.add.mock.calls[0][1] } as unknown as any;
     queue.add.mockClear();
 
     await expect(execBatchJob(job)).resolves.toBe(undefined);

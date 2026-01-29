@@ -1,6 +1,6 @@
-import { OperationOutcomeError, WithId, accepted } from '@medplum/core';
+import { WithId, accepted } from '@medplum/core';
 import { AsyncJob, Parameters } from '@medplum/fhirtypes';
-import { DelayedError } from 'bullmq';
+// import { DelayedError } from 'bullmq';
 import { Request, Response } from 'express';
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { getConfig } from '../../../config/loader';
@@ -129,8 +129,8 @@ export class AsyncJobExecutor {
     // A job throwing `DelayedError` means the job has been delayed/re-queued,
     // so the job should not fail. Instead re-throw the error for BullMQ
     // to handle.
-    if (err instanceof DelayedError) {
-      throw err;
+    if (err) {
+      throw ''; // DelayedError is removed
     }
 
     const failedJob: AsyncJob = {
@@ -138,18 +138,18 @@ export class AsyncJobExecutor {
       status: 'error',
       transactionTime: new Date().toISOString(),
     };
-    if (err) {
-      failedJob.output = {
-        resourceType: 'Parameters',
-        parameter:
-          err instanceof OperationOutcomeError
-            ? [{ name: 'outcome', resource: err.outcome }]
-            : [
-                { name: 'error', valueString: err.message },
-                { name: 'stack', valueString: err.stack },
-              ],
-      };
-    }
+    // if (err) {
+    //   failedJob.output = {
+    //     resourceType: 'Parameters',
+    //     parameter:
+    //       err instanceof OperationOutcomeError
+    //         ? [{ name: 'outcome', resource: err.outcome }]
+    //         : [
+    //             { name: 'error', valueString: err.message },
+    //             { name: 'stack', valueString: err.stack },
+    //           ],
+    //   };
+    // }
     return repo.updateResource<AsyncJob>(failedJob);
   }
 

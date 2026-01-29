@@ -9,15 +9,15 @@ import {
 } from '@medplum/core';
 import { FhirRequest, FhirRouter } from '@medplum/fhir-router';
 import { AsyncJob, Bundle, Login, Project, ProjectMembership } from '@medplum/fhirtypes';
-import { Job, Queue, QueueBaseOptions, Worker } from 'bullmq';
+// import { Job, Queue, QueueBaseOptions } from 'bullmq';
 import { getUserConfiguration } from '../auth/me';
-import { getAuthenticatedContext, tryRunInRequestContext } from '../context';
+import { getAuthenticatedContext } from '../context';
 import { getRepoForLogin } from '../fhir/accesspolicy';
 import { uploadBinaryData } from '../fhir/binary';
 import { AsyncJobExecutor } from '../fhir/operations/utils/asyncjobexecutor';
 import { getSystemRepo } from '../fhir/repo';
 import { getLogger } from '../logger';
-import { queueRegistry, WorkerInitializer } from './utils';
+import { queueRegistry } from './utils';
 
 /*
  * The batch worker runs a batch asynchronously,
@@ -37,34 +37,25 @@ export interface BatchJobData {
 const queueName = 'BatchQueue';
 const jobName = 'BatchJobData';
 
-export const initBatchWorker: WorkerInitializer = (config) => {
-  const defaultOptions: QueueBaseOptions = {
-    connection: config.redis,
-  };
+// export const initBatchWorker: WorkerInitializer = (config) => {
+//   const defaultOptions: QueueBaseOptions = {
+//     connection: config.redis,
+//   };
 
-  const queue = new Queue<BatchJobData>(queueName, {
-    ...defaultOptions,
-    defaultJobOptions: { attempts: 1 },
-  });
+//   const queue = new Queue<BatchJobData>(queueName, {
+//     ...defaultOptions,
+//     defaultJobOptions: { attempts: 1 },
+//   });
 
-  const worker = new Worker<BatchJobData>(
-    queueName,
-    (job) => tryRunInRequestContext(job.data.requestId, job.data.traceId, () => execBatchJob(job)),
-    {
-      ...defaultOptions,
-      ...config.bullmq,
-    }
-  );
-
-  return { queue, worker, name: queueName };
-};
+//   return { queue, name: queueName };
+// };
 
 /**
  * Returns the batch queue instance.
  * This is used by the unit tests.
  * @returns The batch queue (if available).
  */
-export function getBatchQueue(): Queue<BatchJobData> | undefined {
+export function getBatchQueue(): any | undefined {
   return queueRegistry.get(queueName);
 }
 
@@ -73,7 +64,7 @@ export function getBatchQueue(): Queue<BatchJobData> | undefined {
  * @param job - The batch job details.
  * @returns The enqueued job.
  */
-async function addBatchJobData(job: BatchJobData): Promise<Job<BatchJobData>> {
+async function addBatchJobData(job: BatchJobData): Promise<any> {
   const queue = queueRegistry.get<BatchJobData>(queueName);
   if (!queue) {
     throw new Error(`Job queue ${queueName} not available`);
@@ -81,7 +72,7 @@ async function addBatchJobData(job: BatchJobData): Promise<Job<BatchJobData>> {
   return queue.add(jobName, job);
 }
 
-export async function queueBatchProcessing(batch: Bundle, asyncJob: WithId<AsyncJob>): Promise<Job<BatchJobData>> {
+export async function queueBatchProcessing(batch: Bundle, asyncJob: WithId<AsyncJob>): Promise<any> {
   const { requestId, traceId, login, project, membership } = getAuthenticatedContext();
   return addBatchJobData({
     bundle: batch,
@@ -98,7 +89,7 @@ export async function queueBatchProcessing(batch: Bundle, asyncJob: WithId<Async
  * Executes a batch job.
  * @param job - The batch job details.
  */
-export async function execBatchJob(job: Job<BatchJobData>): Promise<void> {
+export async function execBatchJob(job: any): Promise<void> {
   const { bundle, login, project, membership } = job.data;
   const logger = getLogger();
 

@@ -1,6 +1,6 @@
 import { ContentType } from '@medplum/core';
 import { Media } from '@medplum/fhirtypes';
-import { Job } from 'bullmq';
+// import { Job } from 'bullmq';
 import { randomUUID } from 'crypto';
 import fetch from 'node-fetch';
 import { Readable } from 'stream';
@@ -67,7 +67,7 @@ describe('Download Worker', () => {
           body,
         }));
 
-        const job = { id: 1, data: queue.add.mock.calls[0][1] } as unknown as Job;
+        const job = { id: 1, data: queue.add.mock.calls[0][1] } as unknown as any;
         await execDownloadJob(job);
 
         expect(fetch).toHaveBeenCalledWith(url, {
@@ -117,7 +117,7 @@ describe('Download Worker', () => {
 
       (fetch as unknown as jest.Mock).mockImplementation(() => ({ status: 400 }));
 
-      const job = { id: 1, data: queue.add.mock.calls[0][1] } as unknown as Job;
+      const job = { id: 1, data: queue.add.mock.calls[0][1] } as unknown as any;
 
       // If the job throws, then the QueueScheduler will retry
       await expect(execDownloadJob(job)).rejects.toThrow();
@@ -145,7 +145,7 @@ describe('Download Worker', () => {
         throw new Error();
       });
 
-      const job = { id: 1, data: queue.add.mock.calls[0][1] } as unknown as Job;
+      const job = { id: 1, data: queue.add.mock.calls[0][1] } as unknown as any;
 
       // If the job throws, then the QueueScheduler will retry
       await expect(execDownloadJob(job)).rejects.toThrow();
@@ -171,7 +171,7 @@ describe('Download Worker', () => {
       // But let's delete the resource
       await repo.deleteResource('Media', media.id);
 
-      const job = { id: 1, data: queue.add.mock.calls[0][1] } as unknown as Job;
+      const job = { id: 1, data: queue.add.mock.calls[0][1] } as unknown as any;
       await execDownloadJob(job);
 
       // Fetch should not have been called
@@ -204,7 +204,7 @@ describe('Download Worker', () => {
         },
       });
 
-      const job = { id: 1, data: queue.add.mock.calls[0][1] } as unknown as Job;
+      const job = { id: 1, data: queue.add.mock.calls[0][1] } as unknown as any;
       await execDownloadJob(job);
 
       // Fetch should not have been called

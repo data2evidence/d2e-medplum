@@ -9,7 +9,19 @@ import {
   isResourceTypeSchema,
   SearchParameterType,
 } from '@medplum/core';
-import { readJson, SEARCH_PARAMETER_BUNDLE_FILES } from '@medplum/definitions';
+// import { readJson, SEARCH_PARAMETER_BUNDLE_FILES } from '@medplum/definitions';
+// @ts-expect-error
+import profiles from "@medplum/definitions/dist/fhir/r4/profiles-types.json" with { type: "json" };
+// @ts-expect-error
+import profilesResources from "@medplum/definitions/dist/fhir/r4/profiles-resources.json" with { type: "json" };
+// @ts-expect-error
+import profilesMedplum from "@medplum/definitions/dist/fhir/r4/profiles-medplum.json" with { type: "json" };
+// @ts-expect-error
+import searchParameters from "@medplum/definitions/dist/fhir/r4/search-parameters.json" with { type: "json" };
+// @ts-expect-error
+import searchParametersMedplum from "@medplum/definitions/dist/fhir/r4/search-parameters-medplum.json" with { type: "json" };
+// @ts-expect-error
+import searchParametersUSCore from "@medplum/definitions/dist/fhir/r4/search-parameters-uscore.json" with { type: "json" };
 import { Bundle, ResourceType, SearchParameter } from '@medplum/fhirtypes';
 import { readdirSync, writeFileSync } from 'fs';
 import { resolve, dirname } from 'path';
@@ -35,6 +47,7 @@ import {
   TableDefinition,
 } from './types';
 import { fileURLToPath } from 'node:url';
+
 let baseDir: string = "";
 if (typeof __dirname !== 'undefined') {
   baseDir = __dirname;
@@ -44,22 +57,26 @@ if (typeof __dirname !== 'undefined') {
   baseDir = dirname(fileURLToPath(import.meta.url));
 }
 const SCHEMA_DIR = resolve(baseDir, 'schema');
+export const SEARCH_PARAMETER_BUNDLE_FILES = [
+  searchParameters as Bundle<SearchParameter>,
+  searchParametersMedplum as Bundle<SearchParameter>,
+  searchParametersUSCore as Bundle<SearchParameter>,
+];
 
 // Custom SQL functions should be avoided unless absolutely necessary.
 // Do not add any functions to this list unless you have a really good reason for doing so.
 const TargetFunctions: SqlFunctionDefinition[] = [TokenArrayToTextFn];
 
 export function indexStructureDefinitionsAndSearchParameters(): void {
-  indexStructureDefinitionBundle(readJson('fhir/r4/profiles-types.json') as Bundle);
-  indexStructureDefinitionBundle(readJson('fhir/r4/profiles-resources.json') as Bundle);
-  indexStructureDefinitionBundle(readJson('fhir/r4/profiles-medplum.json') as Bundle);
+  indexStructureDefinitionBundle(profiles as Bundle);
+  indexStructureDefinitionBundle(profilesResources as Bundle);
+  indexStructureDefinitionBundle(profilesMedplum as Bundle);
 
-  for (const filename of SEARCH_PARAMETER_BUNDLE_FILES) {
-    const bundle = readJson(filename) as Bundle<SearchParameter>;
+  for (const bundle of SEARCH_PARAMETER_BUNDLE_FILES) {
     indexSearchParameterBundle(bundle);
 
     if (!isPopulated(bundle.entry)) {
-      throw new Error('Empty search parameter bundle: ' + filename);
+      throw new Error('Empty search parameter bundle: ' + bundle);
     }
   }
 }
@@ -79,8 +96,7 @@ export async function main(): Promise<void> {
   const options: BuildMigrationOptions = {
     dbClient,
     skipPostDeployActions: process.argv.includes('--skipPostDeploy'),
-    allowPostDeployActions: process.argv.includes('--allowPostDeploy'),
-    dropUnmatchedIndexes: process.argv.includes('--dropUnmatchedIndexes'),
+    allowPostDeployActions: !process.argv.includes('--skipPostDeploy'), // Allow by default since post-deploy migrations are now synchronous
     analyzeResourceTables: process.argv.includes('--analyzeResourceTables'),
   };
   await dbClient.connect();
@@ -99,7 +115,6 @@ export async function main(): Promise<void> {
 
 export type BuildMigrationOptions = {
   dbClient: Client | Pool | PoolClient;
-  dropUnmatchedIndexes?: boolean;
   skipPostDeployActions?: boolean;
   allowPostDeployActions?: boolean;
   analyzeResourceTables?: boolean;
@@ -141,14 +156,19 @@ export async function generateMigrationActions(options: BuildMigrationOptions): 
   }
 
   const matchedStartTables = new Set<TableDefinition>();
-  for (const targetTable of targetDefinition.tables) {
+  console.log(`Generating migration actions for ${targetDefinition.tables.length} target tables`);
+  for (let i = 0; i < targetDefinition.tables.length; i++) {
+    const targetTable = targetDefinition.tables[i];
+    if (i % 50 === 0 || i === targetDefinition.tables.length - 1) {
+      console.log(`Processing target table ${i + 1}/${targetDefinition.tables.length}: ${targetTable.name}`);
+    }
     const startTable = startDefinition.tables.find((t) => t.name === targetTable.name);
     if (!startTable) {
       actions.push({ type: 'CREATE_TABLE', definition: targetTable });
     } else {
       matchedStartTables.add(startTable);
       actions.push(...generateColumnsActions(ctx, startTable, targetTable));
-      actions.push(...generateIndexesActions(ctx, startTable, targetTable, options));
+      actions.push(...generateIndexesActions(ctx, startTable, targetTable));
     }
   }
 
@@ -181,9 +201,14 @@ async function buildStartDefinition(options: BuildMigrationOptions): Promise<Sch
   }
 
   const tableNames = await getTableNames(db);
+  console.log(`Found ${tableNames.length} tables to analyze`);
   const tables: TableDefinition[] = [];
 
-  for (const tableName of tableNames) {
+  for (let i = 0; i < tableNames.length; i++) {
+    const tableName = tableNames[i];
+    if (i % 50 === 0 || i === tableNames.length - 1) {
+      console.log(`Processing table ${i + 1}/${tableNames.length}: ${tableName}`);
+    }
     tables.push(await getTableDefinition(db, tableName));
   }
 
@@ -1173,8 +1198,7 @@ function getDropIndexQuery(indexName: string): string {
 function generateIndexesActions(
   ctx: GenerateActionsContext,
   startTable: TableDefinition,
-  targetTable: TableDefinition,
-  options: BuildMigrationOptions
+  targetTable: TableDefinition
 ): MigrationAction[] {
   const actions: MigrationAction[] = [];
 
@@ -1205,16 +1229,14 @@ function generateIndexesActions(
   for (const startIndex of startTable.indexes) {
     if (!matchedIndexes.has(startIndex)) {
       console.log(
-        `[${startTable.name}] Existing index should not exist:`,
+        `[${startTable.name}] Dropping unmatched index:`,
         startIndex.indexdef || JSON.stringify(startIndex)
       );
-      if (options?.dropUnmatchedIndexes) {
-        const indexName = parseIndexName(startIndex.indexdef ?? '');
-        if (!indexName) {
-          throw new Error('Could not extract index name from ' + startIndex.indexdef, { cause: startIndex });
-        }
-        actions.push({ type: 'DROP_INDEX', indexName });
+      const indexName = parseIndexName(startIndex.indexdef ?? '');
+      if (!indexName) {
+        throw new Error('Could not extract index name from ' + startIndex.indexdef, { cause: startIndex });
       }
+      actions.push({ type: 'DROP_INDEX', indexName });
     }
   }
   return actions;

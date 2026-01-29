@@ -1,6 +1,6 @@
 import { allOk, badRequest, createReference, getReferenceString } from '@medplum/core';
 import { Bot, Login, Practitioner, Project, ProjectMembership, User } from '@medplum/fhirtypes';
-import { Queue } from 'bullmq';
+// import { Queue } from 'bullmq';
 import express from 'express';
 import { randomUUID } from 'node:crypto';
 import request from 'supertest';
@@ -16,7 +16,7 @@ import { rebuildR4SearchParameters } from '../seeds/searchparameters';
 import { rebuildR4StructureDefinitions } from '../seeds/structuredefinitions';
 import { rebuildR4ValueSets } from '../seeds/valuesets';
 import { createTestProject, waitForAsyncJob, withTestContext } from '../test.setup';
-import { CronJobData, getCronQueue } from '../workers/cron';
+import { getCronQueue } from '../workers/cron';
 import { getReindexQueue, ReindexJobData } from '../workers/reindex';
 import { isValidTableName } from './super';
 
@@ -945,7 +945,7 @@ describe('Super Admin routes', () => {
 
   describe('Reload cron', () => {
     test('Happy path', async () => {
-      const cronQueue = getCronQueue() as Queue<CronJobData>;
+      const cronQueue = getCronQueue() as any;
       expect(cronQueue).toBeDefined();
 
       const res1 = await request(app)

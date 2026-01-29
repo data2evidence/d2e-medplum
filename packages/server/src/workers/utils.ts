@@ -12,7 +12,7 @@ import {
   Resource,
   Subscription,
 } from '@medplum/fhirtypes';
-import { DelayedError, Job, Queue, Worker } from 'bullmq';
+// import { DelayedError, Job, Queue, Worker } from 'bullmq';
 import * as semver from 'semver';
 import { MedplumServerConfig } from '../config/types';
 import { buildTracingExtension } from '../context';
@@ -192,16 +192,16 @@ export async function updateAsyncJobOutput(
   );
 }
 
-export type WorkerInitializer = (config: MedplumServerConfig) => { queue: Queue; worker: Worker; name: string };
+export type WorkerInitializer = (config: MedplumServerConfig) => { queue: any; name: string };
 
 export interface QueueRegistry {
-  add(name: string, queue: Queue, worker: Worker): void;
-  get<T>(name: string): Queue<T> | undefined;
+  add(name: string, queue: any): void;
+  get<T>(name: string): any | undefined;
   isClosing(name: string): boolean | undefined;
   closeAll(): Promise<void>[];
 }
 
-type QueueEntry = { queue: Queue | undefined; worker: Worker | undefined; isClosing: boolean };
+type QueueEntry = { queue: any | undefined; isClosing: boolean };
 
 // exported for testing only, use `queueRegistry` for non-test code
 export class DefaultQueueRegistry implements QueueRegistry {
@@ -211,34 +211,22 @@ export class DefaultQueueRegistry implements QueueRegistry {
     this.queueMap = Object.create(null);
   }
 
-  add(name: string, queue: Queue, worker: Worker): void {
+  add(name: string, queue: any): void {
     if (this.queueMap[name]) {
       throw new Error(`Queue ${name} already registered`);
     }
 
-    this.queueMap[name] = { queue, worker, isClosing: false };
-
-    worker.on('closing', () => {
-      if (this.queueMap[name]) {
-        this.queueMap[name].isClosing = true;
-      }
-    });
+    this.queueMap[name] = { queue, isClosing: false };
   }
 
-  get<T>(name: string): Queue<T> | undefined {
-    return this.queueMap[name]?.queue as Queue<T> | undefined;
+  get<T>(name: string): any | undefined {
+    return this.queueMap[name]?.queue as any | undefined;
   }
 
   private async close(name: string): Promise<void> {
     const entry = this.queueMap[name];
     if (!entry) {
       return;
-    }
-
-    // Close worker first, so any jobs that need to finish can enqueue the next job before exiting
-    if (entry.worker) {
-      await entry.worker.close();
-      entry.worker = undefined;
     }
 
     if (entry.queue) {
@@ -263,7 +251,7 @@ export class DefaultQueueRegistry implements QueueRegistry {
 
 export const queueRegistry: QueueRegistry = new DefaultQueueRegistry();
 
-function getFinishedJobFieldsForLogging(job: Job): Record<string, string | number | undefined> {
+function getFinishedJobFieldsForLogging(job: any): Record<string, string | number | undefined> {
   return {
     jobId: job.id,
     jobTimestamp: job.timestamp,
@@ -277,11 +265,11 @@ function getFinishedJobFieldsForLogging(job: Job): Record<string, string | numbe
   };
 }
 export function addVerboseQueueLogging<TDataType>(
-  queue: Queue,
-  worker: Worker,
-  getJobDataLoggingFields?: (job: Job<TDataType>) => Record<string, string | number | undefined>
+  queue: any,
+  worker: any,
+  getJobDataLoggingFields?: (job: any) => Record<string, string | number | undefined>
 ): void {
-  worker.on('active', (job, prev) => {
+  worker.on('active', (job: any, prev: any) => {
     globalLogger.info(`${queue.name} worker: active`, {
       jobId: job.id,
       attemptsMade: job.attemptsMade,
@@ -290,13 +278,13 @@ export function addVerboseQueueLogging<TDataType>(
       prev,
     });
   });
-  worker.on('closing', async (message) => {
+  worker.on('closing', async (message: any) => {
     globalLogger.info(`${queue.name} worker: closing`, { message });
   });
   worker.on('closed', async () => {
     globalLogger.info(`${queue.name} worker: closed`);
   });
-  worker.on('completed', async (job, result, prev) => {
+  worker.on('completed', async (job: any, result: any, prev: any) => {
     globalLogger.info(`${queue.name} worker: completed`, {
       ...getFinishedJobFieldsForLogging(job),
       ...getJobDataLoggingFields?.(job),
@@ -304,13 +292,13 @@ export function addVerboseQueueLogging<TDataType>(
       prev,
     });
   });
-  worker.on('error', (failedReason) =>
+  worker.on('error', (failedReason: any) =>
     globalLogger.info(`${queue.name} worker: error`, {
       error: failedReason instanceof Error ? failedReason.message : String(failedReason),
       stack: failedReason instanceof Error ? failedReason.stack : undefined,
     })
   );
-  worker.on('failed', (job, error, prev) =>
+  worker.on('failed', (job: any, error: any, prev: any) =>
     globalLogger.info(`${queue.name} worker: failed`, {
       ...(job && getFinishedJobFieldsForLogging(job)),
       ...(job && getJobDataLoggingFields?.(job)),
@@ -319,12 +307,12 @@ export function addVerboseQueueLogging<TDataType>(
       stack: error instanceof Error ? error.stack : undefined,
     })
   );
-  worker.on('stalled', (jobId, prev) => {
+  worker.on('stalled', (jobId: any, prev: any) => {
     globalLogger.info(`${queue.name} worker: stalled`, { jobId, prev });
   });
 }
 
-export async function moveToDelayedAndThrow(job: Job, reason: string): Promise<never> {
+export async function moveToDelayedAndThrow(job: any, reason: string): Promise<never> {
   if (job.token) {
     const delayMs = 60_000;
     globalLogger.info(reason, {
@@ -333,7 +321,7 @@ export async function moveToDelayedAndThrow(job: Job, reason: string): Promise<n
       delayMs,
     });
     await job.moveToDelayed(Date.now() + delayMs, job.token);
-    throw new DelayedError(reason);
+    throw '';
   }
   globalLogger.error('Cannot delay job since job.token is not available', {
     queueName: job.queueName,

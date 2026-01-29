@@ -1,6 +1,6 @@
 import { BackgroundJobContext, WithId } from '@medplum/core';
 import { Patient } from '@medplum/fhirtypes';
-import { addBackgroundJobs, closeWorkers, initWorkers } from '.';
+import { addBackgroundJobs, closeWorkers, initWorkers } from './index';
 import { loadTestConfig } from '../config/loader';
 import { closeDatabase, initDatabase } from '../database';
 import { loadStructureDefinitions } from '../fhir/structure';

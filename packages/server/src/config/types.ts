@@ -1,5 +1,5 @@
 import { ClientApplication, ProjectSetting } from '@medplum/fhirtypes';
-import { KeepJobs } from 'bullmq';
+// import { KeepJobs } from 'bullmq';
 
 export interface MedplumServerConfig {
   port: number;
@@ -167,8 +167,8 @@ export interface MedplumBullmqConfig {
    * @see {@link https://docs.bullmq.io/guide/workers/concurrency}
    */
   concurrency?: number;
-  removeOnComplete: KeepJobs;
-  removeOnFail: KeepJobs;
+  removeOnComplete: any;
+  removeOnFail: any;
 }
 
 export interface MedplumExternalAuthConfig {

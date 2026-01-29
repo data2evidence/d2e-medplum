@@ -1,7 +1,6 @@
-import PdfPrinter from 'pdfmake';
-import { CustomTableLayout, TDocumentDefinitions, TFontDictionary } from 'pdfmake/interfaces';
+// import PdfPrinter from 'pdfmake';
+// import { CustomTableLayout, TDocumentDefinitions, TFontDictionary } from 'pdfmake/interfaces';
 import { Buffer } from 'buffer';
-
 /**
  * Generates a PDF buffer from a document definition.
  *
@@ -11,26 +10,25 @@ import { Buffer } from 'buffer';
  * @returns Promise that resolves to a Buffer containing the PDF.
  */
 export function createPdf(
-  docDefinition: TDocumentDefinitions,
-  tableLayouts?: Record<string, CustomTableLayout>,
-  fonts?: TFontDictionary
+  docDefinition: any,
+  tableLayouts?: Record<string, any>,
+  fonts?: any
 ): Promise<Buffer> {
   return new Promise((resolve, reject) => {
-    const defaultFonts: TFontDictionary = {
-      Helvetica: {
-        normal: 'Helvetica',
-        bold: 'Helvetica-Bold',
-        italics: 'Helvetica-Oblique',
-        bolditalics: 'Helvetica-BoldOblique',
-      },
-    };
-
-    const printer = new PdfPrinter(fonts ?? defaultFonts);
-    const pdfDoc = printer.createPdfKitDocument(docDefinition, { tableLayouts });
-    const chunks: Uint8Array[] = [];
-    pdfDoc.on('data', (chunk: Uint8Array) => chunks.push(chunk));
-    pdfDoc.on('end', () => resolve(Buffer.concat(chunks)));
-    pdfDoc.on('error', reject);
-    pdfDoc.end();
+    // const defaultFonts: any = {
+    //   Helvetica: {
+    //     normal: 'Helvetica',
+    //     bold: 'Helvetica-Bold',
+    //     italics: 'Helvetica-Oblique',
+    //     bolditalics: 'Helvetica-BoldOblique',
+    //   },
+    // };
+    // // const printer = new PdfPrinter(fonts ?? defaultFonts);
+    // // const pdfDoc = printer.createPdfKitDocument(docDefinition, { tableLayouts });
+    // const chunks: Uint8Array[] = [];
+    // pdfDoc.on('data', (chunk: Uint8Array) => chunks.push(chunk));
+    // pdfDoc.on('end', () => resolve(Buffer.concat(chunks)));
+    // pdfDoc.on('error', reject);
+    // pdfDoc.end();
   });
 }

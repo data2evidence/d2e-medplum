@@ -1,6 +1,6 @@
 import { allOk, badRequest, createReference, getReferenceString, parseSearchRequest, WithId } from '@medplum/core';
 import { AsyncJob, Login, Practitioner, Project, ProjectMembership, User } from '@medplum/fhirtypes';
-import { Queue } from 'bullmq';
+// import { Queue } from 'bullmq';
 import { randomUUID } from 'crypto';
 import express from 'express';
 import { Pool, PoolClient } from 'pg';
@@ -78,7 +78,7 @@ jest.mock('./migrations/data/index', () => {
   };
 });
 
-function getQueueAddSpy(): jest.MockedFunctionDeep<Queue<PostDeployJobData>['add']> {
+function getQueueAddSpy(): jest.MockedFunctionDeep<any['add']> {
   const queue = queueRegistry.get<PostDeployJobData>(PostDeployMigrationQueueName);
   if (!queue) {
     throw new Error(`Job queue ${PostDeployMigrationQueueName} not available`);
@@ -86,7 +86,7 @@ function getQueueAddSpy(): jest.MockedFunctionDeep<Queue<PostDeployJobData>['add
   return jest.mocked(queue.add);
 }
 
-function getReindexQueueAddSpy(): jest.MockedFunctionDeep<Queue<ReindexJobData>['add']> {
+function getReindexQueueAddSpy(): jest.MockedFunctionDeep<any['add']> {
   const queue = getReindexQueue();
   if (!queue) {
     throw new Error(`Reindex job queue not available`);

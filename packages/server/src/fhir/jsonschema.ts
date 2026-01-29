@@ -1,8 +1,10 @@
 import { checkForNull, createStructureIssue, OperationOutcomeError, validationError } from '@medplum/core';
-import { readJson } from '@medplum/definitions';
+// import { readJson } from '@medplum/definitions';
 import { OperationOutcomeIssue, Resource } from '@medplum/fhirtypes';
 import { randomUUID } from 'crypto';
 import { JSONSchema4, JSONSchema6 } from 'json-schema';
+// @ts-expect-error
+import fhirSchema from "@medplum/definitions/dist/fhir/r4/fhir.schema.json" with { type: "json" };
 
 /*
  * This file contains helper methods for using fhir.schema.json,
@@ -20,7 +22,7 @@ let schema: JSONSchema4 | undefined = undefined;
 
 function getJsonSchema(): JSONSchema4 {
   if (!schema) {
-    schema = readJson('fhir/r4/fhir.schema.json') as JSONSchema4;
+    schema = fhirSchema as JSONSchema4;
   }
   return schema;
 }

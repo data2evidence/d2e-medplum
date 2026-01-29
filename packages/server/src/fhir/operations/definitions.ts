@@ -1,9 +1,11 @@
 import { OperationOutcomeError, serverError } from '@medplum/core';
-import { readJson } from '@medplum/definitions';
+// import { readJson } from '@medplum/definitions';
 import { Bundle, OperationDefinition, ResourceType, StructureDefinition } from '@medplum/fhirtypes';
+// @ts-expect-error
+import profilesResources from "@medplum/definitions/dist/fhir/r4/profiles-resources.json" with { type: "json" };
 
 const operationDefinitions = (
-  readJson('fhir/r4/profiles-resources.json') as Bundle<StructureDefinition | OperationDefinition>
+  profilesResources as Bundle<StructureDefinition | OperationDefinition>
 ).entry
   ?.filter((e) => e.resource?.resourceType === 'OperationDefinition')
   ?.map((e) => e.resource as OperationDefinition);

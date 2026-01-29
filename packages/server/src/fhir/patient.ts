@@ -1,5 +1,5 @@
 import { evalFhirPath, getReferenceString, getSearchParameter, WithId } from '@medplum/core';
-import { readJson } from '@medplum/definitions';
+// import { readJson } from '@medplum/definitions';
 import {
   CompartmentDefinition,
   CompartmentDefinitionResource,
@@ -8,6 +8,8 @@ import {
   Resource,
   ResourceType,
 } from '@medplum/fhirtypes';
+// @ts-expect-error
+import compartmentDefinitionPatient from "@medplum/definitions/dist/fhir/r4/compartmentdefinition-patient.json" with { type: "json" };
 
 /**
  * Patient compartment definitions.
@@ -21,7 +23,7 @@ let patientCompartment: CompartmentDefinition | undefined = undefined;
  */
 export function getPatientCompartments(): CompartmentDefinition {
   if (!patientCompartment) {
-    patientCompartment = readJson('fhir/r4/compartmentdefinition-patient.json') as CompartmentDefinition;
+    patientCompartment = compartmentDefinitionPatient as CompartmentDefinition;
   }
   return patientCompartment;
 }

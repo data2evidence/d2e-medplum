@@ -1,9 +1,15 @@
-import { readJson } from '@medplum/definitions';
+// import { readJson } from '@medplum/definitions';
 import { Bundle, BundleEntry, Resource, StructureDefinition } from '@medplum/fhirtypes';
 import { r4ProjectId } from '../constants';
 import { DatabaseMode } from '../database';
 import { Repository } from '../fhir/repo';
 import { globalLogger } from '../logger';
+// @ts-expect-error
+import profiles from "@medplum/definitions/dist/fhir/r4/profiles-types.json" with { type: "json" };
+// @ts-expect-error
+import profilesResources from "@medplum/definitions/dist/fhir/r4/profiles-resources.json" with { type: "json" };
+// @ts-expect-error
+import profilesMedplum from "@medplum/definitions/dist/fhir/r4/profiles-medplum.json" with { type: "json" };
 
 /**
  * Creates all StructureDefinition resources.
@@ -13,9 +19,9 @@ export async function rebuildR4StructureDefinitions(systemRepo: Repository): Pro
   const client = systemRepo.getDatabaseClient(DatabaseMode.WRITER);
   await client.query(`DELETE FROM "StructureDefinition" WHERE "projectId" = $1`, [r4ProjectId]);
 
-  await createStructureDefinitionsForBundle(systemRepo, readJson('fhir/r4/profiles-resources.json') as Bundle);
-  await createStructureDefinitionsForBundle(systemRepo, readJson('fhir/r4/profiles-medplum.json') as Bundle);
-  await createStructureDefinitionsForBundle(systemRepo, readJson('fhir/r4/profiles-others.json') as Bundle);
+  await createStructureDefinitionsForBundle(systemRepo, profiles as Bundle);
+  await createStructureDefinitionsForBundle(systemRepo, profilesMedplum as Bundle);
+  await createStructureDefinitionsForBundle(systemRepo, profilesResources as Bundle);
 }
 
 async function createStructureDefinitionsForBundle(

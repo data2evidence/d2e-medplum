@@ -35,18 +35,7 @@ function installDependencies(folderPath, errorSummary) {
 
   try {
     console.log(`🔧 Installing dependencies for ${folderName}...`);
-
-    const entrypointCandidates = [
-      'index.ts',
-      path.join('src', 'index.ts'),
-      'main.ts',
-      path.join('src', 'main.ts')
-    ];
-
-    const entrypoint = entrypointCandidates
-      .map(candidate => ({ candidate, full: path.join(folderPath, candidate) }))
-      .find(({ full }) => fs.existsSync(full))?.candidate;
-
+    const entrypoint = "./src/index.ts"
     console.log(`  🚀 Using entrypoint: ${entrypoint || 'none found'}`);
     if (entrypoint) {
       execSync(`deno cache --reload ${entrypoint}`, {

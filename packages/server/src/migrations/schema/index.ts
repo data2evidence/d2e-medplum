@@ -100,3 +100,4 @@ export * as v92 from './v92';
 export * as v93 from './v93';
 export * as v94 from './v94';
 export * as v95 from './v95';
+export * as v96 from './v96';
