@@ -126,30 +126,11 @@ export class AsyncJobExecutor {
       throw new Error('Cannot failJob since AsyncJob is not specified');
     }
 
-    // A job throwing `DelayedError` means the job has been delayed/re-queued,
-    // so the job should not fail. Instead re-throw the error for BullMQ
-    // to handle.
-    if (err) {
-      throw ''; // DelayedError is removed
-    }
-
     const failedJob: AsyncJob = {
       ...this.resource,
       status: 'error',
       transactionTime: new Date().toISOString(),
     };
-    // if (err) {
-    //   failedJob.output = {
-    //     resourceType: 'Parameters',
-    //     parameter:
-    //       err instanceof OperationOutcomeError
-    //         ? [{ name: 'outcome', resource: err.outcome }]
-    //         : [
-    //             { name: 'error', valueString: err.message },
-    //             { name: 'stack', valueString: err.stack },
-    //           ],
-    //   };
-    // }
     return repo.updateResource<AsyncJob>(failedJob);
   }
 

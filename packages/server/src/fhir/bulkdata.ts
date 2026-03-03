@@ -3,6 +3,7 @@ import { AsyncJob, BulkDataExport } from '@medplum/fhirtypes';
 import { Request, Response, Router } from 'express';
 import { asyncWrap } from '../async';
 import { getAuthenticatedContext } from '../context';
+import { getLogger } from '../logger';
 import { rewriteAttachments, RewriteMode } from './rewrite';
 
 // Bulk Data API
@@ -35,9 +36,16 @@ bulkDataRouter.get(
     const ctx = getAuthenticatedContext();
     const { id } = req.params;
     const bulkDataExport = await getExportResource(id);
+    const log = getLogger();
+
+    log.info('Bulk export poll', { jobId: id, status: bulkDataExport.status });
 
     if (bulkDataExport.status === 'cancelled') {
       res.status(404).json(notFound);
+      return;
+    } else if (bulkDataExport.status === 'error') {
+      log.error('Bulk export job in error state', { jobId: id });
+      res.status(500).json({ error: 'Export failed', jobId: id });
       return;
     } else if (bulkDataExport.status !== 'completed') {
       res.status(202).end();
@@ -52,6 +60,7 @@ bulkDataRouter.get(
       error: extractOutputParameters(bulkDataExport, 'error'),
       deleted: extractOutputParameters(bulkDataExport, 'deleted'),
     });
+    log.info('Bulk export job completed, returning output', { jobId: id });
     res.status(200).type(ContentType.JSON).json(json);
   })
 );
