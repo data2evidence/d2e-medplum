@@ -1,6 +1,7 @@
 import { getReferenceString, WithId } from '@medplum/core';
 import { AsyncJob, Binary, Bundle, Parameters, Project, Resource } from '@medplum/fhirtypes';
 import { PassThrough } from 'node:stream';
+import { globalLogger } from '../../../logger';
 import { getBinaryStorage } from '../../../storage/loader';
 import { getSystemRepo, Repository } from '../../repo';
 
@@ -86,15 +87,24 @@ export class BulkExporter {
       throw new Error('Export muse be started before calling close()');
     }
 
-    for (const writer of Object.values(this.writers)) {
+    const writerCount = Object.keys(this.writers).length;
+    globalLogger.info('BulkExporter: closing writers', { jobId: this.resource.id, writerCount });
+
+    for (const [resourceType, writer] of Object.entries(this.writers)) {
+      globalLogger.info('BulkExporter: closing writer', { jobId: this.resource.id, resourceType });
       await writer.close();
+      globalLogger.info('BulkExporter: writer closed', { jobId: this.resource.id, resourceType });
     }
+
+    globalLogger.info('BulkExporter: all writers closed, updating AsyncJob to completed', { jobId: this.resource.id });
 
     // Update the AsyncJob
     const systemRepo = getSystemRepo();
     const asyncJob = await systemRepo.readResource<AsyncJob>('AsyncJob', this.resource.id);
+    globalLogger.info('BulkExporter: current AsyncJob status before update', { jobId: this.resource.id, status: asyncJob.status });
+
     if (asyncJob.status !== 'cancelled') {
-      return systemRepo.updateResource<AsyncJob>({
+      const updated = await systemRepo.updateResource<AsyncJob>({
         ...this.resource,
         meta: {
           project: project.id,
@@ -103,7 +113,10 @@ export class BulkExporter {
         transactionTime: new Date().toISOString(),
         output: this.formatOutput(),
       });
+      globalLogger.info('BulkExporter: AsyncJob updated to completed', { jobId: this.resource.id });
+      return updated;
     }
+    globalLogger.warn('BulkExporter: AsyncJob was cancelled, skipping completed update', { jobId: this.resource.id });
     return this.resource;
   }
 

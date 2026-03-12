@@ -9,9 +9,11 @@ import {
   singularize,
 } from '@medplum/core';
 import { FhirRequest, FhirResponse } from '@medplum/fhir-router';
-import { Project, Resource, ResourceType } from '@medplum/fhirtypes';
+import { AsyncJob, Project, Resource, ResourceType } from '@medplum/fhirtypes';
 import { getConfig } from '../../config/loader';
 import { getAuthenticatedContext } from '../../context';
+import { globalLogger } from '../../logger';
+import { getSystemRepo } from '../repo';
 import { getPatientResourceTypes } from '../patient';
 import { BulkExporter } from './utils/bulkexporter';
 
@@ -54,11 +56,41 @@ async function startExport(req: FhirRequest, exportType: string): Promise<FhirRe
   const exporter = new BulkExporter(ctx.repo);
   const bulkDataExport = await exporter.start(concatUrls(baseUrl, 'fhir/R4' + req.pathname));
 
-  exportResources(exporter, ctx.project, types, exportType, since)
-    .then(() => ctx.logger.info('Export completed', { exportType, id: ctx.project.id }))
-    .catch((err) => ctx.logger.error('Export failure', { exportType, id: ctx.project.id, error: err }));
+  globalLogger.info('Bulk export started', {
+    exportType,
+    jobId: bulkDataExport.id,
+    projectId: ctx.project.id,
+    types: types ?? 'all',
+    since: since ?? 'none',
+  });
 
-  return [accepted(`${baseUrl}fhir/R4/bulkdata/export/${bulkDataExport.id}`)];
+  exportResources(exporter, ctx.project, types, exportType, since)
+    .then(() => globalLogger.info('Bulk export completed', { exportType, jobId: bulkDataExport.id, projectId: ctx.project.id }))
+    .catch(async (err) => {
+      globalLogger.error('Bulk export failed', {
+        exportType,
+        jobId: bulkDataExport.id,
+        projectId: ctx.project.id,
+        error: err instanceof Error ? err.message : String(err),
+        stack: err instanceof Error ? err.stack : undefined,
+      });
+      try {
+        const systemRepo = getSystemRepo();
+        await systemRepo.updateResource<AsyncJob>({
+          ...bulkDataExport,
+          status: 'error',
+          transactionTime: new Date().toISOString(),
+        });
+        globalLogger.info('Bulk export job marked as error', { jobId: bulkDataExport.id });
+      } catch (updateErr) {
+        globalLogger.error('Failed to mark bulk export job as error', {
+          jobId: bulkDataExport.id,
+          error: updateErr instanceof Error ? updateErr.message : String(updateErr),
+        });
+      }
+    });
+
+  return [accepted(concatUrls(baseUrl, `fhir/R4/bulkdata/export/${bulkDataExport.id}`))];
 }
 
 export async function exportResources(
@@ -79,11 +111,18 @@ export async function exportResources(
     ) {
       continue;
     }
+    globalLogger.info('Bulk export: exporting resource type', { resourceType, projectId: project.id });
     await exportResourceType(exporter, resourceType, pageSize, since);
+    globalLogger.info('Bulk export: finished resource type', {
+      resourceType,
+      projectId: project.id,
+      count: exporter.resourceSet.size,
+    });
   }
 
-  // Close the exporter
+  globalLogger.info('Bulk export: closing exporter', { projectId: project.id, totalResources: exporter.resourceSet.size });
   await exporter.close(project);
+  globalLogger.info('Bulk export: exporter closed successfully', { projectId: project.id });
 }
 
 export async function exportResourceType<T extends Resource>(
