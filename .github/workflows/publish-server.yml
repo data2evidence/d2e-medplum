@@ -116,6 +116,12 @@ jobs:
         working-directory: ${{ matrix.PKGPATH }}
         run: jq '.private=false' package.json > tmppkg; mv tmppkg package.json
 
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
       - name: DEST
         working-directory: ${{ matrix.PKGPATH }}
         run: |
