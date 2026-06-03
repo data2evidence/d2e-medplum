@@ -175,7 +175,6 @@ jobs:
       - name: Publish
         env:
           CI: ${{ matrix.NPM != 'yarn' }}
-          SHOULD_PUBLISH: ${{ github.ref_name == 'main' || github.event_name == 'workflow_dispatch' || ( github.event_name == 'pull_request' && !github.event.pull_request.draft ) }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_PROJECT_TOKEN }}
         run: |
           cd ${{ matrix.DESTPATH || matrix.PKGPATH }}
@@ -192,18 +191,6 @@ jobs:
           fi
 
           ${{ matrix.NPM || 'npm' }} pack
-
-          if [[ $SHOULD_PUBLISH == true ]]; then
-            shopt -s nullglob
-            TGZ_FILES=(*.tgz)
-            if [ ${#TGZ_FILES[@]} -eq 0 ]; then
-              echo "ERROR: no .tgz files found after pack"
-              exit 1
-            fi
-            for PACK_FILE in "${TGZ_FILES[@]}"; do
-              npm publish "$PACK_FILE" --tag latest
-            done
-          fi
 
       - name: Upload server package artifact
         if: always()
