@@ -191,11 +191,28 @@ jobs:
             echo "//pkgs.dev.azure.com/data2evidence/d2e/_packaging/ms/npm/registry/:_authToken=${NODE_AUTH_TOKEN}" >> ./.npmrc
           fi
 
+          ${{ matrix.NPM || 'npm' }} pack
+
           if [[ $SHOULD_PUBLISH == true ]]; then
-             ${{ matrix.NPM || 'npm' }} publish -tag latest
-          else
-             ${{ matrix.NPM || 'npm' }} pack
+            shopt -s nullglob
+            TGZ_FILES=(*.tgz)
+            if [ ${#TGZ_FILES[@]} -eq 0 ]; then
+              echo "ERROR: no .tgz files found after pack"
+              exit 1
+            fi
+            for PACK_FILE in "${TGZ_FILES[@]}"; do
+              npm publish "$PACK_FILE" --tag latest
+            done
           fi
+
+      - name: Upload server package artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-tgz
+          path: ${{ matrix.DESTPATH || matrix.PKGPATH }}/*.tgz
+          if-no-files-found: error
+          retention-days: 7
 
   success:
     needs: build
