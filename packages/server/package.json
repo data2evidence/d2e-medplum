@@ -158,7 +158,8 @@
           "REDIS_HOST": "${REDIS_HOST:-${PROJECT_NAME:-d2e}-minerva-redis-1}",
           "REDIS_PORT": "${REDIS_PORT:-6379}",
           "BINARY_UPLOAD_LIMIT_SIZE": "${BINARY_UPLOAD_LIMIT_SIZE:-50mb}",
-          "AUTH_RATE_LIMIT": "${AUTH_RATE_LIMIT:-1000}"
+          "AUTH_RATE_LIMIT": "${AUTH_RATE_LIMIT:-1000}",
+          "D2E_FHIR_SERVER_PATH":"${D2E_FHIR_SERVER_PATH:-/usr/src/bundled-plugins/d2e-fhir-server}"
         }
       },
       "roles": {
