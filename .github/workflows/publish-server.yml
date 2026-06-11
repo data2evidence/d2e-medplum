@@ -175,7 +175,6 @@ jobs:
       - name: Publish
         env:
           CI: ${{ matrix.NPM != 'yarn' }}
-          SHOULD_PUBLISH: ${{ github.ref_name == 'main' || github.event_name == 'workflow_dispatch' || ( github.event_name == 'pull_request' && !github.event.pull_request.draft ) }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_PROJECT_TOKEN }}
         run: |
           cd ${{ matrix.DESTPATH || matrix.PKGPATH }}
@@ -191,11 +190,16 @@ jobs:
             echo "//pkgs.dev.azure.com/data2evidence/d2e/_packaging/ms/npm/registry/:_authToken=${NODE_AUTH_TOKEN}" >> ./.npmrc
           fi
 
-          if [[ $SHOULD_PUBLISH == true ]]; then
-             ${{ matrix.NPM || 'npm' }} publish -tag latest
-          else
-             ${{ matrix.NPM || 'npm' }} pack
-          fi
+          ${{ matrix.NPM || 'npm' }} pack
+
+      - name: Upload server package artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-tgz
+          path: ${{ matrix.DESTPATH || matrix.PKGPATH }}/*.tgz
+          if-no-files-found: error
+          retention-days: 7
 
   success:
     needs: build
